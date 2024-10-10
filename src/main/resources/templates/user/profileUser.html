@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<header th:insert="sections/header :: header"></header>
+
+<div class="container">
+    <h2>User Profile</h2>
+    <p><strong>Login:</strong> <span th:text="${user.login}"></span></p>
+    <p><strong>First Name:</strong> <span th:text="${user.firstName}"></span></p>
+    <p><strong>Last Name:</strong> <span th:text="${user.lastName}"></span></p>
+    <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+    <p><strong>Phone:</strong> <span th:text="${user.phone}"></span></p>
+    <p><strong>City:</strong> <span th:text="${user.city}"></span></p>
+    <p><strong>Country:</strong> <span th:text="${user.country}"></span></p>
+
+    <form action="/public/user/update" method="GET">
+<!--        <input type="hidden" th:name="id" th:value="6"/> !!!!!!УДАЛИТЬ СТРОКУ: ПОКА ДЛЯ ТЕСТА-->
+        <button type="submit" class="button_right">Update Personal Data</button>
+    </form>
+</div>
+
+<footer th:replace="sections/footer :: footer"></footer>
+
+</body>
+</html>

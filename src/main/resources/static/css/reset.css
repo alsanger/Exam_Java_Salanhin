@@ -1,0 +1,88 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: inherit;
+    line-height: inherit;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    background-color: #fff; /* Задайте цвет фона */
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin-bottom: 1.5rem;
+    font-weight: bold;
+}
+
+p {
+    margin-bottom: 1rem;
+}
+
+ul, ol {
+    margin-left: 1.5rem;
+}
+
+h1 {
+    margin: 20px 0;
+}
+
+p {
+    margin: 10px 0;
+}
+
+ul, ol {
+    list-style: none;
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+button {
+    background-color: #607D8B;
+    color: #fff;
+    padding: 7px 20px;
+    border: 1px solid RGB(150, 140, 150);
+    cursor: pointer;
+    border-radius: 8px;
+    margin: 5px;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #455A64;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+td {
+    padding: 10px;
+    vertical-align: top;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="password"] {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    display: table-cell;
+}
