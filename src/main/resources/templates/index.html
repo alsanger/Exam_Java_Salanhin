@@ -13,7 +13,12 @@
 
 <div class="container">
     <h1>Magazine</h1>
-<!--    <p>Welcome, <span th:text="${#authentication.name}"></span></p>-->
+<!--    <p th:if="${#authorization.expression('isAuthenticated()')}">-->
+<!--        Welcome, <span th:text="${#authentication.name}"></span>-->
+<!--    </p>-->
+<!--    <p th:unless="${#authorization.expression('isAuthenticated()')}">-->
+<!--        Welcome, Guest!-->
+<!--    </p>-->
     <p>This is the best online store!</p>
 </div>
 

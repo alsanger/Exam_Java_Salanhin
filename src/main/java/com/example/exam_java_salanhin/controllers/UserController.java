@@ -23,7 +23,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-
     @GetMapping("/public/user/login")
     public String loginForm() {
         return "user/login";
@@ -44,10 +43,6 @@ public class UserController {
         modelAndView.setViewName("redirect:/");
         return modelAndView;
     }
-
-
-
-
 
     @GetMapping("/public/user/create")
     public String home() {

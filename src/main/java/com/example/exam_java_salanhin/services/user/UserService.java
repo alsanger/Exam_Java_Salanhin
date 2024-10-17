@@ -5,14 +5,27 @@ import com.example.exam_java_salanhin.models.User;
 import com.example.exam_java_salanhin.repositories.RoleRepository;
 import com.example.exam_java_salanhin.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.security.core.userdetails.UserDetailsService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,7 +34,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
 
@@ -29,29 +42,51 @@ public class UserService {
     RoleRepository roleRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    PasswordEncoder passwordEncoder;
 
     @Autowired
     private UserValidationService userValidationService;
 
-    public User authenticateUser(String login, String password) {
-        Optional<User> optionalUser = userRepository.findByLogin(login);
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
+//    public User authenticateUser(String login, String password) {
+//        Optional<User> optionalUser = userRepository.findByLogin(login);
+//
+//        if (optionalUser.isPresent()) {
+//            User user = optionalUser.get();
+//
+//            if (passwordEncoder.matches(password, user.getPassword())) {
+//                List<GrantedAuthority> authorities = new ArrayList<>();
+//                authorities.add(new SimpleGrantedAuthority(user.getRole().getName()));
+//
+//                Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
+//                SecurityContextHolder.getContext().setAuthentication(authentication);
+//
+//                return user;
+//            }
+//        }
+//        return null;
+//    }
 
-            if (passwordEncoder.matches(password, user.getPassword())) {
-                List<GrantedAuthority> authorities = new ArrayList<>();
-                authorities.add(new SimpleGrantedAuthority(user.getRole().getName()));
 
-                Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
+
+        public User authenticateUser(String login, String password) {
+            try {
+                Authentication authenticationToken = new UsernamePasswordAuthenticationToken(login, password);
+                Authentication authentication = authenticationManager.authenticate(authenticationToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                return user;
+                if (authentication.getPrincipal() instanceof UserDetails) {
+                    return (User) authentication.getPrincipal();
+                }
+            } catch (AuthenticationException e) {
+                e.printStackTrace();
+                return null;
             }
+            return null;
         }
-        return null;
-    }
+
 
     public ModelAndView saveUser(User user) {
         ModelAndView modelAndView = new ModelAndView();
@@ -136,5 +171,16 @@ public class UserService {
             roleRepository.save(role);
             user.setRole(role);
         }
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
+        Optional<User> optionalUser = userRepository.findByLogin(login);
+
+        if (optionalUser.isEmpty()) {
+            throw new UsernameNotFoundException("User not found with login: " + login);
+        }
+
+        return optionalUser.get();
     }
 }
