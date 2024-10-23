@@ -1,39 +1,47 @@
 <nav th:fragment="header">
     <div class="nav_div_left">
+        <div class="navbar-brand" th:if="${username == null}">
+            <h3>Welcome to the sportswear store</h3>
+        </div>
         <div class="navbar-brand" th:if="${username != null}">
             <h3>Hello, <span th:text="${username}"></span></h3>
         </div>
-        <div class="navbar-brand" th:text="${username}">
-            <h3>Welcome to the sportswear store</h3>
-        </div>
     </div>
-    <div class="nav_div_right">
-        <form action="/public/user/login">
+
+    <div class="nav_div_right" th:if="${username == null}">
+        <form action="/">
+            <button type="submit">Home</button>
+        </form>
+        <form action="/user/login">
             <button type="submit">Login</button>
         </form>
-        <form action="/public/user/create" method="GET">
+        <form action="/user/createUser" method="GET">
             <button type="submit">Register</button>
         </form>
     </div>
-
-
-
-<!--        <div class="ml-auto">-->
-<!--            <form action="#" th:action="@{/basket}" method="post" class="d-inline">-->
-<!--                <button type="submit" class="btn btn-primary">Basket</button>-->
-<!--            </form>-->
-<!--            <form action="#" th:action="@{/logout}" method="post" class="d-inline">-->
-<!--                <button type="submit" class="btn btn-danger">Logout</button>-->
-<!--            </form>-->
-<!--            <form action="#" th:action="@{/work-area}" method="post" th:if="${user.role == 'ADMIN'}" class="d-inline">-->
-<!--                <button type="submit" class="btn btn-warning">Work Area</button>-->
-<!--            </form>-->
-<!--            <form action="#" th:action="@{/login}" method="get" th:if="${user == null}" class="d-inline">-->
-<!--                <button type="submit" class="btn btn-success">Login</button>-->
-<!--            </form>-->
-<!--            <form action="#" th:action="@{/register}" method="get" th:if="${user == null}" class="d-inline">-->
-<!--                <button type="submit" class="btn btn-info">Register</button>-->
-<!--            </form>-->
-<!--        </div>-->
-
+    <div class="nav_div_right" th:if="${username != null && role == 'ROLE_USER'}">
+        <form action="/">
+            <button type="submit">Home</button>
+        </form>
+        <form action="/user/updateUser">
+            <button type="submit">Personal Area</button>
+        </form>
+        <form action="/user/logout" method="GET">
+            <button type="submit">Logout</button>
+        </form>
+        <form action="/user/logout" method="GET">
+            <button type="submit">BASKET</button>
+        </form>
+    </div>
+    <div class="nav_div_right" th:if="${username != null && role != 'ROLE_USER'}">
+        <form action="/">
+            <button type="submit">Home</button>
+        </form>
+        <form action="/user/logout" method="GET">
+            <button type="submit">Logout</button>
+        </form>
+        <form action="/admin/workAreaAdmin" method="GET">
+            <button type="submit">WORK AREA</button>
+        </form>
+    </div>
 </nav>

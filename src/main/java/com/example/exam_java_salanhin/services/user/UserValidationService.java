@@ -5,6 +5,7 @@ import com.example.exam_java_salanhin.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 @Service
@@ -16,10 +17,25 @@ public class UserValidationService {
         return userRepository.existsById(id);
     }
 
-    public boolean isUserExists(User user) {
-        return userRepository.existsByLogin(user.getLogin()) ||
-                userRepository.existsByEmail(user.getEmail()) ||
-                userRepository.existsByPhone(user.getPhone());
+    public boolean isUserLoginExists(User user) {
+        if (user.getId() == null) {
+            return userRepository.existsByLogin(user.getLogin());
+        }
+        return userRepository.existsByLoginAndIdNot(user.getLogin(), user.getId());
+    }
+
+    public boolean isUserEmailExists(User user) {
+        if (user.getId() == null) {
+            return userRepository.existsByEmail(user.getEmail());
+        }
+        return userRepository.existsByEmailAndIdNot(user.getEmail(), user.getId());
+    }
+
+    public boolean isUserPhoneExists(User user) {
+        if (user.getId() == null) {
+            return userRepository.existsByPhone(user.getPhone());
+        }
+        return userRepository.existsByPhoneAndIdNot(user.getPhone(), user.getId());
     }
 
     public String validateUserData(User user) {
@@ -29,7 +45,7 @@ public class UserValidationService {
 
         String passwordRegex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{6,}$";
         if (!Pattern.matches(passwordRegex, user.getPassword())) {
-            return "The password must contain at least 6 characters, including uppercase letters, lowercase letters and numbers.";
+            return "The password must contain at least 6 characters";
         }
 
         return null;

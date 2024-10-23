@@ -1,5 +1,6 @@
 package com.example.exam_java_salanhin.models;
 
+import com.example.exam_java_salanhin.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,8 +32,4 @@ public class Order {
     private OrderStatus orderStatus;
 
     private LocalDateTime createdAt;
-}
-
-enum OrderStatus {
-    PENDING, SHIPPED, DELIVERED, CANCELED
 }

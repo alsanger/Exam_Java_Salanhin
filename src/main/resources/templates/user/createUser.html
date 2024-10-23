@@ -13,12 +13,17 @@
 
 <div class="container">
     <h2>Register New User</h2>
-    <form action="/public/user/create" method="POST">
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+    <div th:if="${error != null}">
+        <p style="color:red;" th:text="${error}"></p>
+    </div>
+
+    <form action="/user/createUser" method="POST">
+        <input type="hidden" th:name="fromAdmin" th:value="${fromAdmin}"/>
         <table id="formTable">
             <tr>
                 <td><label for="login">Login:</label></td>
-                <td><input type="text" id="login" name="login" required></td>
+                <td><input type="text" id="login" name="login" autocomplete="username" required></td>
             </tr>
             <tr>
                 <td><label for="firstName">First Name:</label></td>
@@ -38,7 +43,7 @@
             </tr>
             <tr>
                 <td><label for="password">Password:</label></td>
-                <td><input type="password" id="password" name="password" required></td>
+                <td><input type="password" id="password" name="password" autocomplete="current-password" required></td>
             </tr>
             <tr>
                 <td><label for="city">City:</label></td>
@@ -48,6 +53,19 @@
                 <td><label for="country">Country:</label></td>
                 <td><input type="text" id="country" name="country"></td>
             </tr>
+
+            <tr th:if="${fromAdmin}">
+                <td><label for="roleSelect">Role:</label></td>
+                <td>
+                    <select id="roleSelect" name="newUserRoleString" required>
+                        <option value="" disabled selected>Select Role</option>
+                        <option th:each="role : ${roles}" th:value="${role.name}" th:text="${role.name}"></option>
+                    </select>
+                </td>
+            </tr>
+
+            <input type="hidden" th:if="${!fromAdmin}" name="newUserRoleString" value="ROLE_USER"/>
+
             <tr>
                 <td colspan="2">
                     <button type="submit" class="button_right">Create User</button>
@@ -55,6 +73,7 @@
             </tr>
         </table>
     </form>
+
 
 </div>
 

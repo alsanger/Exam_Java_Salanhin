@@ -1,40 +1,31 @@
 package com.example.exam_java_salanhin.services.user;
 
+import com.example.exam_java_salanhin.models.BlockedUser;
 import com.example.exam_java_salanhin.models.Role;
 import com.example.exam_java_salanhin.models.User;
+import com.example.exam_java_salanhin.repositories.BlockedUserRepository;
 import com.example.exam_java_salanhin.repositories.RoleRepository;
 import com.example.exam_java_salanhin.repositories.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.security.core.userdetails.UserDetailsService;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.view.RedirectView;
 
 
+import javax.swing.*;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
-public class UserService implements UserDetailsService {
+public class UserService {
     @Autowired
     UserRepository userRepository;
 
@@ -42,57 +33,46 @@ public class UserService implements UserDetailsService {
     RoleRepository roleRepository;
 
     @Autowired
-    PasswordEncoder passwordEncoder;
+    BlockedUserRepository blockedUserRepository;
 
     @Autowired
     private UserValidationService userValidationService;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-//    public User authenticateUser(String login, String password) {
-//        Optional<User> optionalUser = userRepository.findByLogin(login);
-//
-//        if (optionalUser.isPresent()) {
-//            User user = optionalUser.get();
-//
-//            if (passwordEncoder.matches(password, user.getPassword())) {
-//                List<GrantedAuthority> authorities = new ArrayList<>();
-//                authorities.add(new SimpleGrantedAuthority(user.getRole().getName()));
-//
-//                Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
-//                SecurityContextHolder.getContext().setAuthentication(authentication);
-//
-//                return user;
-//            }
-//        }
-//        return null;
-//    }
+    public User authenticateUser(String login, String password) {
+        Optional<User> optionalUser = userRepository.findByLogin(login);
 
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
 
-
-        public User authenticateUser(String login, String password) {
-            try {
-                Authentication authenticationToken = new UsernamePasswordAuthenticationToken(login, password);
-                Authentication authentication = authenticationManager.authenticate(authenticationToken);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-
-                if (authentication.getPrincipal() instanceof UserDetails) {
-                    return (User) authentication.getPrincipal();
-                }
-            } catch (AuthenticationException e) {
-                e.printStackTrace();
-                return null;
+            if (passwordEncoder.matches(password, user.getPassword())) {
+                return user;
             }
-            return null;
         }
+        return null;
+    }
 
-
-    public ModelAndView saveUser(User user) {
+    public ModelAndView saveUser(User user, boolean fromAdmin) {
         ModelAndView modelAndView = new ModelAndView();
 
-        if (userValidationService.isUserExists(user)) {
-            modelAndView.addObject("error", "A user with this login, email or phone number already exists.");
+        if (userValidationService.isUserLoginExists(user)) {
+            modelAndView.addObject("error", "A user with this login already exists.");
+            modelAndView.addObject("fromAdmin", fromAdmin);
+            modelAndView.setViewName("user/createUser");
+            return modelAndView;
+        }
+
+        if (userValidationService.isUserEmailExists(user)) {
+            modelAndView.addObject("error", "A user with this email already exists.");
+            modelAndView.addObject("fromAdmin", fromAdmin);
+            modelAndView.setViewName("user/createUser");
+            return modelAndView;
+        }
+
+        if (userValidationService.isUserPhoneExists(user)) {
+            modelAndView.addObject("error", "A user with this phone number already exists.");
+            modelAndView.addObject("fromAdmin", fromAdmin);
             modelAndView.setViewName("user/createUser");
             return modelAndView;
         }
@@ -100,14 +80,19 @@ public class UserService implements UserDetailsService {
         String validationError = userValidationService.validateUserData(user);
         if (validationError != null) {
             modelAndView.addObject("error", validationError);
-            modelAndView.setViewName("registration");
+            modelAndView.addObject("fromAdmin", fromAdmin);
+            modelAndView.setViewName("user/createUser");
             return modelAndView;
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreatedAt(LocalDateTime.now());
+
         userRepository.save(user);
+
+        modelAndView.addObject("error", "");
         modelAndView.setViewName("redirect:/");
+
         return modelAndView;
     }
 
@@ -119,48 +104,68 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(id);
     }
 
-    public ModelAndView updateUser(Long id, User updatedUser) {
-        ModelAndView modelAndView = new ModelAndView();
+    public String updateUser(User user, String confirmPassword, boolean blockStatus) {
+        User currentUser = userRepository.findById(user.getId()).orElse(null);
 
-        if (userValidationService.isUserExists(updatedUser)) {
-            modelAndView.addObject("error", "A user with this email or phone number already exists.");
-            modelAndView.setViewName("user/updateUser");
-            return modelAndView;
+        if (currentUser == null) {
+            return "User not found";
         }
 
-        String validationError = userValidationService.validateUserData(updatedUser);
-        if (validationError != null) {
-            modelAndView.addObject("error", validationError);
-            modelAndView.setViewName("user/updateUser");
-            return modelAndView;
+        if (!currentUser.getEmail().equals(user.getEmail()) &&
+                userValidationService.isUserEmailExists(user)) {
+            return "User with this email already exists";
         }
 
-        User existingUser = userRepository.findById(id).orElse(null);
-        if (existingUser != null) {
-            existingUser.setFirstName(updatedUser.getFirstName());
-            existingUser.setLastName(updatedUser.getLastName());
-            existingUser.setEmail(updatedUser.getEmail());
-            existingUser.setPhone(updatedUser.getPhone());
-            existingUser.setCity(updatedUser.getCity());
-            existingUser.setCountry(updatedUser.getCountry());
+        if (!currentUser.getPhone().equals(user.getPhone()) &&
+                userValidationService.isUserPhoneExists(user)) {
+            return "User with this phone number already exists";
+        }
 
-            if (!updatedUser.getPassword().isEmpty() && !passwordEncoder.matches(updatedUser.getPassword(), existingUser.getPassword())) {
-                existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+        if (!user.getPassword().isEmpty()) {
+            if (!user.getPassword().equals(confirmPassword)) {
+                return "The passwords entered do not match";
             }
 
-            userRepository.save(existingUser);
-            modelAndView.setViewName("redirect:/user/profileUser");
-        } else {
-            modelAndView.addObject("error", "Failed to update user.");
-            modelAndView.setViewName("user/updateUser");
+            if (!passwordEncoder.matches(user.getPassword(), currentUser.getPassword())) {
+                String validationError = userValidationService.validateUserData(user);
+                if (validationError != null) {
+                    return validationError;
+                }
+            }
         }
 
-        return modelAndView;
-    }
 
+        currentUser.setFirstName(user.getFirstName());
+        currentUser.setLastName(user.getLastName());
+        currentUser.setEmail(user.getEmail());
+        currentUser.setPhone(user.getPhone());
+        currentUser.setCity(user.getCity());
+        currentUser.setCountry(user.getCountry());
+        currentUser.setRole((user.getRole()));
+
+        if (!user.getPassword().isEmpty() &&
+                !passwordEncoder.matches(user.getPassword(), currentUser.getPassword())) {
+            currentUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+
+        userRepository.save(currentUser);
+
+        if (blockStatus && this.isBlocked(currentUser.getId()).isEmpty()) {
+            blockUser(currentUser.getId());
+        }
+        if (!blockStatus && this.isBlocked(currentUser.getId()).isPresent()) {
+            unblockUser(currentUser.getId());
+        }
+
+        return "";
+    }
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    public List<Role> getAllRoles() {
+        return roleRepository.findAll();
     }
 
     public void assignRoleToUser(User user, Role role) {
@@ -173,14 +178,34 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        Optional<User> optionalUser = userRepository.findByLogin(login);
+    public Optional<BlockedUser> isBlocked(Long userId) {
+        return blockedUserRepository.findByUserId(userId);
+    }
 
-        if (optionalUser.isEmpty()) {
-            throw new UsernameNotFoundException("User not found with login: " + login);
+    public boolean blockUser(Long userId) {
+        return blockUser(userId, "");
+    }
+    public boolean blockUser(Long userId, String reason) {
+        Optional<User> userOptional = this.getUserById(userId);
+
+        if (userOptional.isPresent()) {
+            BlockedUser blockedUser = new BlockedUser();
+            blockedUser.setUser(userOptional.get());
+            blockedUser.setReason(reason);
+            blockedUser.setBlockedAt(LocalDateTime.now());
+            blockedUserRepository.save(blockedUser);
+            return true;
         }
+        return false;
+    }
 
-        return optionalUser.get();
+    public boolean unblockUser(Long userId) {
+        Optional<BlockedUser> blockedUserOptional = blockedUserRepository.findByUserId(userId);
+
+        if (blockedUserOptional.isPresent()) {
+            blockedUserRepository.delete(blockedUserOptional.get());
+            return true;
+        }
+        return false;
     }
 }

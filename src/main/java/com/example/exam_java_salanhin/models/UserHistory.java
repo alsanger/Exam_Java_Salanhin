@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,6 +24,7 @@ public class UserHistory {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private String action;
+    @OneToMany(mappedBy = "userHistory", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Action> actions;
     private LocalDateTime createdAt;
 }

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Edit User</title>
+    <title>Update User Information</title>
     <link rel="stylesheet" href="/css/reset.css">
     <link rel="stylesheet" href="/css/styles.css">
 </head>
@@ -12,12 +12,29 @@
 <header th:insert="sections/header :: header"></header>
 
 <div class="container">
-    <h2>Edit User</h2>
-    <form action="/public/user/update" method="POST">
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    <h2>Update User Information</h2>
+
+    <div th:if="${error != null}">
+        <p style="color:red;" th:text="${error}"></p>
+    </div>
+
+    <form action="/user/updateUser" method="POST">
+        <input type="hidden" th:name="fromAdmin" th:value="${fromAdmin}"/>
         <input type="hidden" th:name="id" th:value="${user.id}"/>
-        <input type="hidden" th:name="login" th:value="${user.login}"/>
         <table id="formTable">
+            <tr>
+                <td><label for="login">Login:</label></td>
+                <td><input type="text" id="login" name="login" th:value="${user.login + ' (cannot be edited)'}"
+                           readonly></td>
+            </tr>
+            <tr>
+                <td><label for="password">Password:</label></td>
+                <td><input type="password" id="password" name="password" autocomplete="password"></td>
+            </tr>
+            <tr>
+                <td><label for="confirmPassword">Confirm Password:</label></td>
+                <td><input type="password" id="confirmPassword" name="confirmPassword"></td>
+            </tr>
             <tr>
                 <td><label for="firstName">First Name:</label></td>
                 <td><input type="text" id="firstName" name="firstName" th:value="${user.firstName}" required></td>
@@ -35,10 +52,6 @@
                 <td><input type="tel" id="phone" name="phone" th:value="${user.phone}"></td>
             </tr>
             <tr>
-                <td><label for="password">Password:</label></td>
-                <td><input type="password" id="password" name="password"></td>
-            </tr>
-            <tr>
                 <td><label for="city">City:</label></td>
                 <td><input type="text" id="city" name="city" th:value="${user.city}"></td>
             </tr>
@@ -46,6 +59,27 @@
                 <td><label for="country">Country:</label></td>
                 <td><input type="text" id="country" name="country" th:value="${user.country}"></td>
             </tr>
+
+            <tr th:if="${fromAdmin == true}">
+                <td><label for="roleSelect">Role:</label></td>
+                <td>
+                    <select id="roleSelect" name="newUserRoleString" required>
+                        <option th:each="role : ${roles}" th:value="${role.name}" th:text="${role.name}"
+                                th:selected="${role.name == user.role.name}"></option>
+                    </select>
+                </td>
+            </tr>
+
+            <tr th:if="${fromAdmin == true}">
+                <td><label for="blockStatus">Block Status:</label></td>
+                <td>
+                    <select id="blockStatus" name="blockStatus">
+                        <option value="false" th:selected="${!isBlocked}">NOT BLOCKED</option>
+                        <option value="true" th:selected="${isBlocked}">BLOCKED</option>
+                    </select>
+                </td>
+            </tr>
+
             <tr>
                 <td colspan="2">
                     <button type="submit" class="button_right">Update User</button>
@@ -54,9 +88,12 @@
         </table>
     </form>
 
-    <div th:if="${error}" class="error">
-        <p th:text="${error}"></p>
-    </div>
+    <form id="deleteUser" action="/user/deleteUser" method="POST">
+        <input type="hidden" th:name="fromAdmin" th:value="${fromAdmin}"/>
+        <input type="hidden" th:name="id" th:value="${user.id}"/>
+        <button type="submit" class="button_right">Delete Account</button>
+    </form>
+
 </div>
 
 <footer th:replace="sections/footer :: footer"></footer>
