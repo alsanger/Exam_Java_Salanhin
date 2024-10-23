@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Work Area</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<header th:insert="sections/header :: header"></header>
+
+<div class="container">
+    <h2>Admin Work Area</h2>
+
+    <table id="adminTable">
+        <thead>
+        <tr>
+            <th>User Management</th>
+            <th>Product Management</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                <form action="/admin/registerUser" method="POST">
+                    <button type="submit" class="button_right">Register</button>
+                </form>
+            </td>
+            <td>
+                <form action="/admin/manageCategories" method="POST">
+                    <button type="submit" class="button_right">Categories</button>
+                </form>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <form action="/admin/editDeleteUser" method="POST">
+                    <button type="submit" class="button_right">Edit / Delete</button>
+                </form>
+            </td>
+            <td>
+                <form action="/admin/manageProducts" method="POST">
+                    <button type="submit" class="button_right">Products</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+<footer th:replace="sections/footer :: footer"></footer>
+
+<!--    <script src="/js/scripts.js"></script>-->
+</body>
+</html>
