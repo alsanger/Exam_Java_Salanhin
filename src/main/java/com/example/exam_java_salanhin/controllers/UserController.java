@@ -96,9 +96,13 @@ public class UserController {
 
     @PostMapping("/user/createUser")
     public ModelAndView createUser(@ModelAttribute User user,
-                                   @RequestParam(required = false) String newUserRoleString,
+                                   @RequestParam(value = "confirmPassword") String confirmPassword,
+                                   @RequestParam(value = "newUserRoleString") String newUserRoleString,
                                    @RequestParam(value = "fromAdmin") boolean fromAdmin,
                                    HttpServletRequest request) {
+
+        ModelAndView modelAndView = new ModelAndView();
+
         Role userRole = new Role();
         if (userService.getAllUsers().isEmpty()) {
             userRole.setName("ROLE_ADMIN");
@@ -109,21 +113,23 @@ public class UserController {
                 userRole.setName("ROLE_USER");
             }
         }
-
         userService.assignRoleToUser(user, userRole);
-        ModelAndView modelAndView = userService.saveUser(user, fromAdmin);
 
-        if ((String) modelAndView.getModel().get("error") == "") {
+        String error = userService.saveUser(user, confirmPassword);
+
+        if (error == "") {
             if (fromAdmin) {
                 modelAndView.setViewName("admin/workAreaAdmin");
             } else {
+                modelAndView.setViewName("redirect:/");
                 HttpSession session = request.getSession();
                 session.setAttribute("user", user);
-                modelAndView.setViewName("redirect:/");
             }
         } else {
-            List<Role> roles = userService.getAllRoles();
-            modelAndView.addObject("roles", roles);
+            modelAndView.addObject("error", error);
+            modelAndView.addObject("fromAdmin", fromAdmin);
+
+            modelAndView.setViewName("redirect:/user/createUser");
         }
         return modelAndView;
     }

@@ -53,36 +53,35 @@ public class UserService {
         return null;
     }
 
-    public ModelAndView saveUser(User user, boolean fromAdmin) {
-        ModelAndView modelAndView = new ModelAndView();
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public Optional<User> getUserById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    public String saveUser(User user, String confirmPassword) {
 
         if (userValidationService.isUserLoginExists(user)) {
-            modelAndView.addObject("error", "A user with this login already exists.");
-            modelAndView.addObject("fromAdmin", fromAdmin);
-            modelAndView.setViewName("user/createUser");
-            return modelAndView;
+            return "User with this login already exists";
         }
 
         if (userValidationService.isUserEmailExists(user)) {
-            modelAndView.addObject("error", "A user with this email already exists.");
-            modelAndView.addObject("fromAdmin", fromAdmin);
-            modelAndView.setViewName("user/createUser");
-            return modelAndView;
+            return "User with this email already exists";
         }
 
         if (userValidationService.isUserPhoneExists(user)) {
-            modelAndView.addObject("error", "A user with this phone number already exists.");
-            modelAndView.addObject("fromAdmin", fromAdmin);
-            modelAndView.setViewName("user/createUser");
-            return modelAndView;
+            return "User with this phone number already exists";
+        }
+
+        if (!user.getPassword().equals(confirmPassword)) {
+            return "The passwords entered do not match";
         }
 
         String validationError = userValidationService.validateUserData(user);
         if (validationError != null) {
-            modelAndView.addObject("error", validationError);
-            modelAndView.addObject("fromAdmin", fromAdmin);
-            modelAndView.setViewName("user/createUser");
-            return modelAndView;
+            return validationError;
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -90,18 +89,7 @@ public class UserService {
 
         userRepository.save(user);
 
-        modelAndView.addObject("error", "");
-        modelAndView.setViewName("redirect:/");
-
-        return modelAndView;
-    }
-
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
-    public Optional<User> getUserById(Long id) {
-        return userRepository.findById(id);
+        return "";
     }
 
     public String updateUser(User user, String confirmPassword, boolean blockStatus) {
@@ -133,7 +121,6 @@ public class UserService {
                 }
             }
         }
-
 
         currentUser.setFirstName(user.getFirstName());
         currentUser.setLastName(user.getLastName());
@@ -185,6 +172,7 @@ public class UserService {
     public boolean blockUser(Long userId) {
         return blockUser(userId, "");
     }
+
     public boolean blockUser(Long userId, String reason) {
         Optional<User> userOptional = this.getUserById(userId);
 
