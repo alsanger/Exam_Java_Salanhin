@@ -1,6 +1,6 @@
 package com.example.exam_java_salanhin.controllers;
 
-import com.example.exam_java_salanhin.models.Role;
+import com.example.exam_java_salanhin.models.Category;
 import com.example.exam_java_salanhin.models.User;
 import com.example.exam_java_salanhin.services.admin.AdminService;
 import com.example.exam_java_salanhin.services.user.UserService;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 
 @Controller
@@ -71,5 +72,56 @@ public class AdminController {
     @PostMapping("/admin/updateUserFromAdmin")
     public ModelAndView updateUserFromAdmin(@RequestParam(value = "updatedUserID") Long updatedUserID) {
         return userController.updateUser(updatedUserID, "", true, null);
+    }
+
+    @GetMapping("/admin/manageCategories")
+    public ModelAndView manageCategories() {
+        ModelAndView modelAndView = new ModelAndView();
+
+        List<Category> categories = adminService.getAllCategories(); // Получение списка категорий из сервиса
+        categories.sort(Comparator.comparing(Category::getCategoryName)); // Сортировка по алфавиту
+
+        modelAndView.addObject("categories", categories);
+        modelAndView.setViewName("admin/category/categoriesList");
+        return modelAndView;
+    }
+
+    @GetMapping("/admin/createCategory")
+    public ModelAndView createCategory() {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("admin/category/createCategory");
+        return modelAndView;
+    }
+
+    @PostMapping("/admin/createCategory")
+    public String createCategory(@RequestParam("categoryName") String categoryName) {
+        Category newCategory = new Category();
+        newCategory.setCategoryName(categoryName);
+
+        adminService.saveCategory(newCategory);
+
+        return "redirect:/admin/manageCategories";
+    }
+
+    @GetMapping("/admin/editCategory")
+    public ModelAndView editCategory(@RequestParam("categoryId") Long categoryId) {
+        ModelAndView modelAndView = new ModelAndView();
+
+        Category category = adminService.getCategoryById(categoryId);
+        modelAndView.addObject("category", category);
+        modelAndView.setViewName("admin/category/editCategory");
+        return modelAndView;
+    }
+
+    @PostMapping("/admin/updateCategory")
+    public String updateCategory(@RequestParam("categoryId") Long categoryId, @RequestParam("categoryName") String categoryName) {
+        adminService.updateCategory(categoryId, categoryName);
+        return "redirect:/admin/manageCategories";
+    }
+
+    @PostMapping("/admin/deleteCategory")
+    public String deleteCategory(@RequestParam("categoryId") Long categoryId) {
+        adminService.deleteCategoryById(categoryId);
+        return "redirect:/admin/manageCategories"; // Перенаправление на обновленный список категорий
     }
 }

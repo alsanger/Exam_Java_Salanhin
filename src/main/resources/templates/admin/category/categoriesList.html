@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Category Management</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<header th:insert="sections/header :: header"></header>
+
+<div class="container">
+    <h2>Category Management</h2>
+
+    <form action="/admin/createCategory" method="GET">
+        <button type="submit">Add New Category</button>
+    </form>
+
+    <table id="categoriesListTable">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Category Name</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="category, iterStat : ${categories}">
+            <td th:text="${iterStat.index + 1}"></td>
+            <td th:text="${category.categoryName}"></td>
+            <td class="buttonContainer">
+                <form action="/admin/editCategory" method="GET">
+                    <input type="hidden" name="categoryId" th:value="${category.id}"/>
+                    <button type="submit" class="button_full_width">Edit</button>
+                </form>
+                <form action="/admin/deleteCategory" method="POST">
+                    <input type="hidden" name="categoryId" th:value="${category.id}"/>
+                    <button type="submit" class="button_full_width">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<footer th:replace="sections/footer :: footer"></footer>
+
+</body>
+</html>

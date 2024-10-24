@@ -1,62 +1,46 @@
 package com.example.exam_java_salanhin.services.admin;
 
-import com.example.exam_java_salanhin.models.User;
-import com.example.exam_java_salanhin.repositories.RoleRepository;
-import com.example.exam_java_salanhin.repositories.UserRepository;
-import com.example.exam_java_salanhin.services.user.UserValidationService;
+import com.example.exam_java_salanhin.models.Category;
+import com.example.exam_java_salanhin.repositories.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.ModelAndView;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class AdminService {
     @Autowired
-    UserRepository userRepository;
+    private CategoryRepository categoryRepository;
 
-    @Autowired
-    RoleRepository roleRepository;
+    public List<Category> getAllCategories() {
+        return categoryRepository.findAll();
+    }
 
-    @Autowired
-    private UserValidationService userValidationService;
+    public void deleteCategoryById(Long categoryId) {
+        categoryRepository.deleteById(categoryId);
+    }
 
-    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    public Category getCategoryById(Long categoryId) {
+        return categoryRepository.findById(categoryId).orElse(null);
+    }
 
+    public void saveCategory(Category category) {
+        if (categoryRepository.existsByCategoryName(category.getCategoryName())) {
+            return;
+        }
 
-//    public ModelAndView saveUser(User user) {
-//        ModelAndView modelAndView = new ModelAndView();
-//
-//        if (userValidationService.isUserLoginExists(user)) {
-//            modelAndView.addObject("error", "A user with this login already exists.");
-//            modelAndView.setViewName("admin/createUser");
-//            return modelAndView;
-//        }
-//
-//        if (userValidationService.isUserEmailExists(user)) {
-//            modelAndView.addObject("error", "A user with this email already exists.");
-//            modelAndView.setViewName("admin/createUser");
-//            return modelAndView;
-//        }
-//
-//        if (userValidationService.isUserPhoneExists(user)) {
-//            modelAndView.addObject("error", "A user with this phone number already exists.");
-//            modelAndView.setViewName("admin/createUser");
-//            return modelAndView;
-//        }
-//
-//        String validationError = userValidationService.validateUserData(user);
-//        if (validationError != null) {
-//            modelAndView.addObject("error", validationError);
-//            modelAndView.setViewName("admin/createUser");
-//            return modelAndView;
-//        }
-//
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
-//        user.setCreatedAt(LocalDateTime.now());
-//        userRepository.save(user);
-//        modelAndView.setViewName("admin/workAreaAdmin");
-//        return modelAndView;
-//    }
+        categoryRepository.save(category);
+    }
+
+    public void updateCategory(Long categoryId, String categoryName) {
+        if (categoryRepository.existsByCategoryNameAndIdNot(categoryName, categoryId)) {
+            return;
+        }
+
+        Category category = getCategoryById(categoryId);
+        if (category != null) {
+            category.setCategoryName(categoryName);
+            categoryRepository.save(category);
+        }
+    }
 }

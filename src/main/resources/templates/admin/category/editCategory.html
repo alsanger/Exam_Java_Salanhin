@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Category</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<header th:insert="sections/header :: header"></header>
+
+<div class="container">
+    <h2>Edit Category</h2>
+
+    <form action="/admin/updateCategory" method="POST">
+        <input type="hidden" name="categoryId" th:value="${category.id}"/>
+        <div>
+            <label for="categoryName">Category Name:</label>
+            <input type="text" id="categoryName" name="categoryName" th:value="${category.categoryName}" required/>
+        </div>
+        <button type="submit" class="button_full_width">Save Changes</button>
+
+        <input type="button" class="button_full_width" value="Cancel" onclick="window.location.href='/admin/manageCategories';"/>
+    </form>
+</div>
+
+<footer th:replace="sections/footer :: footer"></footer>
+
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Create New Category</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<header th:insert="sections/header :: header"></header>
+
+<div class="container">
+    <h2>Create New Category</h2>
+
+    <form action="/admin/createCategory" method="POST">
+        <div>
+            <label for="categoryName">Category Name:</label>
+            <input type="text" id="categoryName" name="categoryName" required/>
+        </div>
+        <button type="submit" class="button_full_width">Add Category</button>
+        <input type="button" class="button_full_width" value="Cancel" onclick="window.location.href='/admin/manageCategories';"/>
+    </form>
+</div>
+
+<footer th:replace="sections/footer :: footer"></footer>
+
+</body>
+</html>
