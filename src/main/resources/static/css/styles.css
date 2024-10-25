@@ -67,7 +67,7 @@ body {
     width: 75%;
 }
 
-#deleteUser {
+#deleteUser, #cancel {
     margin-right: 10px;
 }
 
@@ -144,9 +144,9 @@ body {
     text-align: center;
 }
 
-#roleSelect, #blockStatus {
+#roleSelect, #blockStatus, #categorySelect {
     width: 100%; /* Полная ширина ячейки */
-    padding: 5px; /* Отступ для внутреннего заполнения */
+    padding: 8px 5px; /* Отступ для внутреннего заполнения */
     margin-bottom: 5px; /* Отступ снизу */
     border: 1px solid #ccc; /* Границы для унификации */
     border-radius: 5px; /* Сглаживание углов */
@@ -159,7 +159,7 @@ body {
 
 
 /* Полупрозрачный фон для таблицы с id usersListTable */
-#usersListTable, #categoriesListTable {
+#usersListTable, #categoriesListTable, #productsListTable {
     width: 100%;
     border-collapse: collapse;
     margin: 20px 0;
@@ -168,7 +168,7 @@ body {
 }
 
 /* Центрирование заголовков таблицы */
-#usersListTable th, #categoriesListTable th {
+#usersListTable th, #categoriesListTable th, #productsListTable th {
     text-align: center; /* Центрирование текста заголовков */
     padding: 10px;
     background-color: #607D8B; /* Темный фон для заголовков */
@@ -176,7 +176,7 @@ body {
 }
 
 /* Текст по левому краю в строках */
-#usersListTable td, #categoriesListTable td {
+#usersListTable td, #categoriesListTable td, #productsListTable td {
     text-align: left; /* Текст в ячейках по левому краю */
     padding: 10px;
     vertical-align: middle; /* Центрирование по вертикали */
@@ -184,13 +184,17 @@ body {
 }
 
 /* Центрирование кнопок по вертикали и горизонтали */
-#usersListTable .buttonContainer, #categoriesListTable .buttonContainer {
+#usersListTable .buttonContainer,
+#categoriesListTable .buttonContainer,
+#productsListTable .buttonContainer {
     display: flex;
     justify-content: center; /* Центрирование по горизонтали */
     align-items: center; /* Центрирование по вертикали */
 }
 
-#usersListTable .button_full_width, #categoriesListTable .button_full_width {
+#usersListTable .button_full_width,
+#categoriesListTable .button_full_width,
+#productsListTable .button_full_width {
     width: 100%; /* Кнопка растягивается на всю ширину */
     padding: 10px;
     background-color: #607D8B;
@@ -203,6 +207,8 @@ body {
     text-align: center; /* Центрирование текста кнопки */
 }
 
-#usersListTable .button_full_width:hover, #categoriesListTable .button_full_width:hover {
+#usersListTable .button_full_width:hover,
+#categoriesListTable .button_full_width:hover,
+#productsListTable .button_full_width:hover {
     background-color: #455A64; /* Темнее при наведении */
 }

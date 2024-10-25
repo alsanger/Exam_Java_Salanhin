@@ -1,6 +1,7 @@
 package com.example.exam_java_salanhin.controllers;
 
 import com.example.exam_java_salanhin.models.Category;
+import com.example.exam_java_salanhin.models.Product;
 import com.example.exam_java_salanhin.models.User;
 import com.example.exam_java_salanhin.services.admin.AdminService;
 import com.example.exam_java_salanhin.services.user.UserService;
@@ -123,5 +124,28 @@ public class AdminController {
     public String deleteCategory(@RequestParam("categoryId") Long categoryId) {
         adminService.deleteCategoryById(categoryId);
         return "redirect:/admin/manageCategories"; // Перенаправление на обновленный список категорий
+    }
+
+    @GetMapping("/admin/manageProducts")
+    public ModelAndView manageProducts() {
+        ModelAndView modelAndView = new ModelAndView();
+
+        List<Product> products = adminService.getAllProducts();
+        products.sort(Comparator.comparing(Product::getName));
+
+        modelAndView.addObject("products", products);
+        modelAndView.setViewName("admin/product/manageProducts");
+        return modelAndView;
+    }
+
+    @GetMapping("/admin/createProduct")
+    public ModelAndView createProduct() {
+        ModelAndView modelAndView = new ModelAndView();
+
+        List<Category> categories = adminService.getAllCategories();
+        modelAndView.addObject("categories", categories);
+
+        modelAndView.setViewName("admin/product/createProduct");
+        return modelAndView;
     }
 }

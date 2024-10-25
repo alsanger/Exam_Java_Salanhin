@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Create New Product</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<header th:insert="sections/header :: header"></header>
+
+<div class="container">
+    <h2>Create New Product</h2>
+
+    <form action="/admin/saveProduct" method="POST">
+        <table id="formTable">
+            <tr>
+                <td><label for="productName">Product Name:</label></td>
+                <td><input type="text" id="productName" name="productName" required></td>
+            </tr>
+            <tr>
+                <td><label for="productDescription">Description:</label></td>
+                <td><input type="text" id="productDescription" name="productDescription" required></td>
+            </tr>
+            <tr>
+                <td><label for="productPrice">Price:</label></td>
+                <td><input type="text" id="productPrice" name="productPrice" required></td>
+            </tr>
+            <tr>
+                <td><label for="categorySelect">Category:</label></td>
+                <td>
+                    <select id="categorySelect" name="categoryId" required>
+                        <option value="" disabled selected>Select a category</option>
+                        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.categoryName}"></option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <button type="submit" class="button_right">Add Product</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    <form id="cancel" action="/admin/manageProducts" method="GET">
+        <button type="submit" class="button_right">Cancel</button>
+    </form>
+
+</div>
+
+<footer th:replace="sections/footer :: footer"></footer>
+
+</body>
+</html>
