@@ -206,29 +206,11 @@ public class AdminController {
         return modelAndView;
     }
 
-//    @PostMapping("/admin/createProduct")
-//    public String createProduct(@ModelAttribute Product product,
-//                                @RequestParam("categoryId") Long categoryId,
-//                                @RequestParam(value = "brandId", required = false) Long brandId) {
-//
-//        Category category = adminService.getCategoryById(categoryId);
-//        adminService.assignCategoryToProduct(product, category);
-//
-//        if (brandId != null) {
-//            Brand brand = adminService.getBrandById(brandId);
-//            adminService.assignBrandToProduct(product, brand);
-//        }
-//
-//        adminService.saveProduct(product);
-//
-//        return "redirect:/admin/manageProducts";
-//    }
-
     @PostMapping("/admin/createProduct")
     public String createProduct(@ModelAttribute Product product,
                                 @RequestParam("categoryId") Long categoryId,
                                 @RequestParam(value = "brandId", required = false) Long brandId,
-                                @RequestParam("images") MultipartFile[] images) {
+                                @RequestParam(value = "images", required = false) MultipartFile[] images) {
 
         Category category = adminService.getCategoryById(categoryId);
         adminService.assignCategoryToProduct(product, category);

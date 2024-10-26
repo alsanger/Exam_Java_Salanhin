@@ -23,6 +23,7 @@
         <tr>
             <th>#</th>
             <th>Product Name</th>
+            <th>Brand</th>
             <th>Price</th>
             <th>Category</th>
             <th>Actions</th>
@@ -32,6 +33,7 @@
         <tr th:each="product, iterStat : ${products}">
             <td th:text="${iterStat.index + 1}"></td>
             <td th:text="${product.name}"></td>
+            <td th:text="${product.getBrand().getName()}"></td>
             <td th:text="${product.price}"></td>
             <td th:text="${product.category.name}"></td>
             <td class="buttonContainer">

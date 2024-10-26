@@ -12,6 +12,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -103,86 +104,67 @@ public class AdminService {
         // Сохранить продукт для получения ID
         productRepository.save(product);
 
-        // Обработка и сохранение изображений
+        // Проверка на наличие изображений перед обработкой
         if (images != null && images.length > 0) {
-            saveImagesForProduct(product.getId(), images);
-        }
-    }
+            List<ProductImage> productImages = new ArrayList<>();
+            String folderPath = "src/main/resources/static/images/" + product.getId();
+            File directory = new File(folderPath);
 
-    // Метод для сохранения изображений продукта с переименованием файлов
-    private void saveImagesForProduct(Long productId, MultipartFile[] images) {
-        String folderPath = "src/main/resources/static/images/" + productId;
-        File directory = new File(folderPath);
-
-        // Создаем папку, если она не существует
-        if (!directory.exists() && !directory.mkdirs()) {
-            return; // Не удалось создать папку, просто выходим из метода
-        }
-
-        // Счетчик для имен файлов
-        int counter = 1;
-
-        // Обработка каждого файла
-        for (MultipartFile image : images) {
-            if (!image.isEmpty() && isImageFile(image)) {
-                String newFileName = productId + "_" + counter + getFileExtension(image);
-                saveImageFile(image, folderPath, newFileName);
-                counter++;
+            // Создаем папку, если она не существует
+            if (!directory.exists() && !directory.mkdirs()) {
+                return; // Не удалось создать папку, просто выходим из метода
             }
+
+            // Переименование и сохранение файлов
+            int index = 1;
+            for (MultipartFile image : images) {
+                if (!image.isEmpty() && isImageFile(image)) {
+                    String extension = getFileExtension(image.getOriginalFilename());
+                    String newFileName = product.getId() + "_" + index + extension;
+                    String newFilePath = folderPath + "/" + newFileName;
+
+                    if (saveImageFile(image, newFilePath)) {
+                        ProductImage productImage = new ProductImage();
+                        productImage.setImagePath(newFilePath);
+                        productImage.setProduct(product);
+                        productImages.add(productImage);
+                        index++;
+                    }
+                }
+            }
+
+            // Сохранить все изображения в базе данных
+            product.setProductImages(productImages);
+            productRepository.save(product);
         }
     }
 
-    // Метод для сохранения одного файла изображения с указанным именем
-    private void saveImageFile(MultipartFile image, String folderPath, String fileName) {
+    // Метод для сохранения одного файла изображения
+    private boolean saveImageFile(MultipartFile image, String filePath) {
         try {
-            Path path = Paths.get(folderPath, fileName);
+            Path path = Paths.get(filePath);
 
             // Проверяем, если файл уже существует, не перезаписываем его
             if (!Files.exists(path)) {
                 Files.write(path, image.getBytes());
+                return true;
             }
         } catch (Exception e) {
-            // Логирование ошибки при необходимости, но не выбрасываем исключение
+            // Логирование ошибки при необходимости
         }
+        return false;
     }
 
-    // Метод для получения расширения файла
-    private String getFileExtension(MultipartFile file) {
-        String originalFilename = file.getOriginalFilename();
-        if (originalFilename != null && originalFilename.contains(".")) {
-            return originalFilename.substring(originalFilename.lastIndexOf("."));
-        }
-        return ""; // Вернуть пустую строку, если расширение отсутствует
-    }
-
-//    private void saveImagesForProduct(Long productId, MultipartFile[] images) {
-//        String folderPath = "src/main/resources/static/images/" + productId;
-//        File directory = new File(folderPath);
-//
-//        if (!directory.exists() && !directory.mkdirs()) {
-//            return;
-//        }
-//
-//        for (MultipartFile image : images) {
-//            if (!image.isEmpty() && isImageFile(image)) {
-//                saveImageFile(image, folderPath);
-//            }
-//        }
-//    }
-//
-//    private void saveImageFile(MultipartFile image, String folderPath) {
-//        try {
-//            Path path = Paths.get(folderPath, image.getOriginalFilename());
-//
-//            if (!Files.exists(path)) {
-//                Files.write(path, image.getBytes());
-//            }
-//        } catch (Exception ignored) {}
-//    }
-//
+    // Метод для проверки, является ли файл изображением
     private boolean isImageFile(MultipartFile file) {
         String contentType = file.getContentType();
         return contentType != null && contentType.startsWith("image/");
+    }
+
+    // Метод для получения расширения файла
+    private String getFileExtension(String fileName) {
+        int dotIndex = fileName.lastIndexOf('.');
+        return (dotIndex == -1) ? "" : fileName.substring(dotIndex);
     }
 
 

@@ -5,8 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,7 +27,10 @@ public class Product {
     private BigDecimal price;
     private String size;
     private String color;
+
+    @Lob // Для хранения больших текстов
     private String description;
+
     private int stockQuantity;
 
     @ManyToOne
@@ -35,6 +41,12 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductImage> productImages;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    @Transient
+    private List<MultipartFile> images;
 }
