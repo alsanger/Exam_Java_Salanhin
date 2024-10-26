@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Edit Category</title>
+    <title>Edit Brand</title>
     <link rel="stylesheet" href="/css/reset.css">
     <link rel="stylesheet" href="/css/styles.css">
 </head>
@@ -12,17 +12,17 @@
 <header th:insert="sections/header :: header"></header>
 
 <div class="container">
-    <h2>Edit Category</h2>
+    <h2>Edit Brand</h2>
 
-    <form action="/admin/updateCategory" method="POST">
-        <input type="hidden" name="categoryId" th:value="${category.id}"/>
+    <form action="/admin/updateBrand" method="POST">
+        <input type="hidden" name="brandId" th:value="${brand.id}"/>
         <div>
-            <label for="categoryName">Category Name:</label>
-            <input type="text" id="categoryName" name="categoryName" th:value="${category.name}" required/>
+            <label for="brandName">Brand Name:</label>
+            <input type="text" id="brandName" name="brandName" th:value="${brand.name}" required/>
         </div>
         <button type="submit" class="button_full_width">Save Changes</button>
 
-        <input type="button" class="button_full_width" value="Cancel" onclick="window.location.href='/admin/manageCategories';"/>
+        <input type="button" class="button_full_width" value="Cancel" onclick="window.location.href='/admin/manageBrands';"/>
     </form>
 </div>
 

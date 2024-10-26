@@ -5,23 +5,22 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
-@Table(name = "blocked_users")
-public class BlockedUser {
+@Table(name = "product_images")
+public class ProductImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    private String imagePath;
 
-    private LocalDateTime blockedAt;
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
 }

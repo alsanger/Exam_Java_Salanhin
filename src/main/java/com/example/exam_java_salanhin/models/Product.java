@@ -21,12 +21,15 @@ public class Product {
     private Long id;
 
     private String name;
-    private String brand;
     private BigDecimal price;
     private String size;
     private String color;
     private String description;
     private int stockQuantity;
+
+    @ManyToOne
+    @JoinColumn(name = "brand_id")
+    private Brand brand;
 
     @ManyToOne
     @JoinColumn(name = "category_id")

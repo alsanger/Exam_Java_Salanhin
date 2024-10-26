@@ -14,31 +14,56 @@
 <div class="container">
     <h2>Create New Product</h2>
 
-    <form action="/admin/saveProduct" method="POST">
+    <form action="/admin/createProduct" method="POST" enctype="multipart/form-data">
         <table id="formTable">
             <tr>
                 <td><label for="productName">Product Name:</label></td>
-                <td><input type="text" id="productName" name="productName" required></td>
-            </tr>
-            <tr>
-                <td><label for="productDescription">Description:</label></td>
-                <td><input type="text" id="productDescription" name="productDescription" required></td>
+                <td><input type="text" id="productName" name="name" required></td>
             </tr>
             <tr>
                 <td><label for="productPrice">Price:</label></td>
-                <td><input type="text" id="productPrice" name="productPrice" required></td>
+                <td><input type="number" id="productPrice" step="0.01" style="appearance: textfield" name="price" required></td>
             </tr>
             <tr>
                 <td><label for="categorySelect">Category:</label></td>
                 <td>
                     <select id="categorySelect" name="categoryId" required>
                         <option value="" disabled selected>Select a category</option>
-                        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.categoryName}"></option>
+                        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
                     </select>
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td><label for="brandSelect">Brand:</label></td>
+                <td>
+                    <select id="brandSelect" name="brandId">
+                        <option value="" disabled selected>Select a brand (optional)</option>
+                        <option th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="productSize">Size:</label></td>
+                <td><input type="text" id="productSize" name="size"></td>
+            </tr>
+            <tr>
+                <td><label for="productColor">Color:</label></td>
+                <td><input type="text" id="productColor" name="color"></td>
+            </tr>
+            <tr>
+                <td><label for="productDescription">Description:</label></td>
+                <td><textarea id="productDescription" name="description" maxlength="255"></textarea></td>
+            </tr>
+            <tr>
+                <td><label for="productStockQuantity">Stock Quantity:</label></td>
+                <td><input type="number" id="productStockQuantity" step="1" name="stockQuantity" required></td>
+            </tr>
+            <tr>
+                <td><label for="productImage">Add Images:</label></td>
+                <td><input type="file" id="productImage" name="images" accept="image/*" multiple></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="display: flex; justify-content: space-between;">
                     <button type="submit" class="button_right">Add Product</button>
                 </td>
             </tr>

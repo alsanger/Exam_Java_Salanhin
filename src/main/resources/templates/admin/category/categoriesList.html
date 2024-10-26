@@ -29,7 +29,7 @@
         <tbody>
         <tr th:each="category, iterStat : ${categories}">
             <td th:text="${iterStat.index + 1}"></td>
-            <td th:text="${category.categoryName}"></td>
+            <td th:text="${category.name}"></td>
             <td class="buttonContainer">
                 <form action="/admin/editCategory" method="GET">
                     <input type="hidden" name="categoryId" th:value="${category.id}"/>

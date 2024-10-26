@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Product Management</title>
+    <title>Brand Management</title>
     <link rel="stylesheet" href="/css/reset.css">
     <link rel="stylesheet" href="/css/styles.css">
 </head>
@@ -12,35 +12,31 @@
 <header th:insert="sections/header :: header"></header>
 
 <div class="container">
-    <h2>Product Management</h2>
+    <h2>Brand Management</h2>
 
-    <form action="/admin/createProduct" method="GET">
-        <button type="submit">Add New Product</button>
+    <form action="/admin/createBrand" method="GET">
+        <button type="submit">Add New Brand</button>
     </form>
 
-    <table id="productsListTable">
+    <table id="brandsListTable">
         <thead>
         <tr>
             <th>#</th>
-            <th>Product Name</th>
-            <th>Price</th>
-            <th>Category</th>
+            <th>Brand Name</th>
             <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="product, iterStat : ${products}">
+        <tr th:each="brand, iterStat : ${brands}">
             <td th:text="${iterStat.index + 1}"></td>
-            <td th:text="${product.name}"></td>
-            <td th:text="${product.price}"></td>
-            <td th:text="${product.category.name}"></td>
+            <td th:text="${brand.name}"></td>
             <td class="buttonContainer">
-                <form action="/admin/editProduct" method="GET">
-                    <input type="hidden" name="productId" th:value="${product.id}"/>
+                <form action="/admin/editBrand" method="GET">
+                    <input type="hidden" name="brandId" th:value="${brand.id}"/>
                     <button type="submit" class="button_full_width">Edit</button>
                 </form>
-                <form action="/admin/deleteProduct" method="POST">
-                    <input type="hidden" name="productId" th:value="${product.id}"/>
+                <form action="/admin/deleteBrand" method="POST">
+                    <input type="hidden" name="brandId" th:value="${brand.id}"/>
                     <button type="submit" class="button_full_width">Delete</button>
                 </form>
             </td>

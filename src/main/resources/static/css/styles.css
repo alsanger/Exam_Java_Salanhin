@@ -144,7 +144,10 @@ body {
     text-align: center;
 }
 
-#roleSelect, #blockStatus, #categorySelect {
+#roleSelect,
+#blockStatus,
+#categorySelect,
+#brandSelect {
     width: 100%; /* Полная ширина ячейки */
     padding: 8px 5px; /* Отступ для внутреннего заполнения */
     margin-bottom: 5px; /* Отступ снизу */
@@ -159,7 +162,10 @@ body {
 
 
 /* Полупрозрачный фон для таблицы с id usersListTable */
-#usersListTable, #categoriesListTable, #productsListTable {
+#usersListTable,
+#categoriesListTable,
+#brandsListTable,
+#productsListTable {
     width: 100%;
     border-collapse: collapse;
     margin: 20px 0;
@@ -168,7 +174,10 @@ body {
 }
 
 /* Центрирование заголовков таблицы */
-#usersListTable th, #categoriesListTable th, #productsListTable th {
+#usersListTable th,
+#categoriesListTable th,
+#brandsListTable th,
+#productsListTable th {
     text-align: center; /* Центрирование текста заголовков */
     padding: 10px;
     background-color: #607D8B; /* Темный фон для заголовков */
@@ -176,7 +185,10 @@ body {
 }
 
 /* Текст по левому краю в строках */
-#usersListTable td, #categoriesListTable td, #productsListTable td {
+#usersListTable td,
+#categoriesListTable td,
+#brandsListTable td,
+#productsListTable td {
     text-align: left; /* Текст в ячейках по левому краю */
     padding: 10px;
     vertical-align: middle; /* Центрирование по вертикали */
@@ -186,6 +198,7 @@ body {
 /* Центрирование кнопок по вертикали и горизонтали */
 #usersListTable .buttonContainer,
 #categoriesListTable .buttonContainer,
+#brandsListTable .buttonContainer,
 #productsListTable .buttonContainer {
     display: flex;
     justify-content: center; /* Центрирование по горизонтали */
@@ -194,6 +207,7 @@ body {
 
 #usersListTable .button_full_width,
 #categoriesListTable .button_full_width,
+#brandsListTable .button_full_width,
 #productsListTable .button_full_width {
     width: 100%; /* Кнопка растягивается на всю ширину */
     padding: 10px;
@@ -209,6 +223,7 @@ body {
 
 #usersListTable .button_full_width:hover,
 #categoriesListTable .button_full_width:hover,
+#brandsListTable .button_full_width:hover,
 #productsListTable .button_full_width:hover {
     background-color: #455A64; /* Темнее при наведении */
 }

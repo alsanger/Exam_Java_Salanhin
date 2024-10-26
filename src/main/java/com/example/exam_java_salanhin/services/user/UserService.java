@@ -179,7 +179,6 @@ public class UserService {
         if (userOptional.isPresent()) {
             BlockedUser blockedUser = new BlockedUser();
             blockedUser.setUser(userOptional.get());
-            blockedUser.setReason(reason);
             blockedUser.setBlockedAt(LocalDateTime.now());
             blockedUserRepository.save(blockedUser);
             return true;
