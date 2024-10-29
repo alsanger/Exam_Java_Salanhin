@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
     <title>Product Management</title>
@@ -33,9 +32,9 @@
         <tr th:each="product, iterStat : ${products}">
             <td th:text="${iterStat.index + 1}"></td>
             <td th:text="${product.name}"></td>
-            <td th:text="${product.getBrand().getName()}"></td>
+            <td th:text="${product.brand != null ? product.brand.name : 'Brand not specified'}"></td>
             <td th:text="${product.price}"></td>
-            <td th:text="${product.category.name}"></td>
+            <td th:text="${product.category != null ? product.category.name : 'Category not specified'}"></td>
             <td class="buttonContainer">
                 <form action="/admin/editProduct" method="GET">
                     <input type="hidden" name="productId" th:value="${product.id}"/>

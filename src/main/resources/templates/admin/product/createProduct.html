@@ -15,7 +15,7 @@
     <h2>Create New Product</h2>
 
     <form action="/admin/createProduct" method="POST" enctype="multipart/form-data">
-        <table id="formTable">
+        <table class="formTable">
             <tr>
                 <td><label for="productName">Product Name:</label></td>
                 <td><input type="text" id="productName" name="name" required></td>
@@ -52,7 +52,7 @@
             </tr>
             <tr>
                 <td><label for="productDescription">Description:</label></td>
-                <td><textarea id="productDescription" name="description"></textarea></td>
+                <td><textarea id="productDescription" name="description" rows="10"></textarea></td>
             </tr>
             <tr>
                 <td><label for="productStockQuantity">Stock Quantity:</label></td>
@@ -63,7 +63,7 @@
                 <td><input type="file" id="productImage" name="images" accept="image/*" multiple></td>
             </tr>
             <tr>
-                <td colspan="2" style="display: flex; justify-content: space-between;">
+                <td colspan="2">
                     <button type="submit" class="button_right">Add Product</button>
                 </td>
             </tr>

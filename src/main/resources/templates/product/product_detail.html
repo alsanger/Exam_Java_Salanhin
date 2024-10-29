@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${product.name}">Product Detail</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<header th:insert="sections/header :: header"></header>
+
+<div class="container">
+    <h2 th:text="${product.name}">Product Name</h2>
+    <div class="product-detail">
+        <div class="product-info">
+            <h3 id="product-price"><strong>Price:</strong> $<span th:text="${product.price}">0.00</span></h3>
+            <p><strong>Description:</strong> <span th:text="${product.description}">Product description goes here.</span></p>
+            <div class="buttonContainer">
+                <form action="/product/addToBasket" method="POST" th:if="${userId != null}">
+                    <input type="hidden" name="userId" th:value="${userId}"/>
+                    <input type="hidden" name="productId" th:value="${product.id}"/>
+                    <button type="submit" class="button_full_width">Add to Basket</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="product-detail-images">
+        <div th:each="image : ${product.productImages}">
+            <img th:src="@{'/' + ${image.imagePath}}" alt="Product Image" class="product-detail-img">
+        </div>
+    </div>
+</div>
+
+<footer th:replace="sections/footer :: footer"></footer>
+
+</body>
+</html>

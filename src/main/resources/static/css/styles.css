@@ -55,15 +55,15 @@ body {
     max-width: 1200px;
 }
 
-#formTable {
+.formTable {
     width: 500px;
 }
 
-#formTable td:first-child {
+.formTable td:first-child {
     width: 25%;
 }
 
-#formTable td:nth-child(2) {
+.formTable td:nth-child(2) {
     width: 75%;
 }
 
@@ -71,11 +71,8 @@ body {
     margin-right: 10px;
 }
 
-
-
-/* Универсальные стили для кнопок */
 .button_full_width {
-    width: 100%; /* Кнопка растягивается по ширине ячейки */
+    width: 100%;
     padding: 10px;
     background-color: #607D8B;
     color: #fff;
@@ -83,7 +80,7 @@ body {
     cursor: pointer;
     border-radius: 8px;
     font-size: 16px;
-    margin: 5px 0; /* Добавляем немного отступа сверху и снизу */
+    margin: 5px 0;
     text-align: center;
 }
 
@@ -91,48 +88,46 @@ body {
     background-color: #455A64;
 }
 
-/* Стили для таблицы */
 #adminTable {
-    width: 100%; /* Занимает всю ширину контейнера */
+    width: 100%;
     border-collapse: collapse;
-    margin: 20px 0; /* Отступы для лучшего восприятия */
+    margin: 20px 0;
 }
 
-
-
-/* Настройка ширины ячеек таблицы */
 #adminTable td {
     padding: 10px;
     vertical-align: top;
 }
 
-/* Применение одинаковой ширины для колонок с кнопками */
 #adminTable .buttonContainer {
     display: flex;
     gap: 10px;
 }
 
 #adminTable .buttonContainer form {
-    flex: 1; /* Равномерное распределение кнопок по ширине */
+    flex: 1;
 }
 
-/* Центрирование текста по вертикали */
 .managementTitle {
-    vertical-align: middle; /* Центрирование по вертикали */
-    width: 20%; /* Установите ширину ячейки с текстом */
-    padding-right: 10px; /* Отступ справа */
-    font-weight: bold; /* Выделение текста */
+    vertical-align: middle;
+    width: 20%;
+    padding-right: 10px;
+    font-weight: bold;
 }
 
-/* Контейнер кнопок */
 .buttonContainer {
     display: flex;
     gap: 10px;
 }
 
-/* Индивидуальная настройка ширины кнопок */
+#buttonSave {
+    padding-left: 50px;
+    padding-right: 50px;
+    margin-right: 15px;
+}
+
 .button_full_width {
-    flex: 1; /* Кнопка будет растягиваться, но можно переопределить ширину */
+    flex: 1;
     padding: 10px;
     background-color: #607D8B;
     color: #fff;
@@ -140,28 +135,26 @@ body {
     cursor: pointer;
     border-radius: 8px;
     font-size: 16px;
-    margin: 5px 0; /* Добавляем отступ сверху и снизу */
+    margin: 5px 0;
     text-align: center;
 }
 
 #roleSelect,
 #blockStatus,
 #categorySelect,
-#brandSelect {
-    width: 100%; /* Полная ширина ячейки */
-    padding: 8px 5px; /* Отступ для внутреннего заполнения */
-    margin-bottom: 5px; /* Отступ снизу */
-    border: 1px solid #ccc; /* Границы для унификации */
-    border-radius: 5px; /* Сглаживание углов */
-    font-size: 14px; /* Размер шрифта */
-    display: table-cell; /* Выровнять по аналогии с input */
-    background-color: #fff; /* Белый фон */
-    cursor: pointer; /* Указатель для выбора */
+#brandSelect,
+#sortSelect {
+    width: 100%;
+    padding: 8px 5px;
+    margin-bottom: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    display: table-cell;
+    background-color: #fff;
+    cursor: pointer;
 }
 
-
-
-/* Полупрозрачный фон для таблицы с id usersListTable */
 #usersListTable,
 #categoriesListTable,
 #brandsListTable,
@@ -169,47 +162,44 @@ body {
     width: 100%;
     border-collapse: collapse;
     margin: 20px 0;
-    background-color: rgba(255, 255, 255, 0.8); /* Белый полупрозрачный фон */
-    border: 1px solid RGB(150, 140, 150); /* Границы таблицы */
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid RGB(150, 140, 150);
 }
 
-/* Центрирование заголовков таблицы */
 #usersListTable th,
 #categoriesListTable th,
 #brandsListTable th,
 #productsListTable th {
-    text-align: center; /* Центрирование текста заголовков */
+    text-align: center;
     padding: 10px;
-    background-color: #607D8B; /* Темный фон для заголовков */
-    color: white; /* Цвет текста заголовков */
+    background-color: #607D8B;
+    color: white;
 }
 
-/* Текст по левому краю в строках */
 #usersListTable td,
 #categoriesListTable td,
 #brandsListTable td,
 #productsListTable td {
-    text-align: left; /* Текст в ячейках по левому краю */
+    text-align: left;
     padding: 10px;
-    vertical-align: middle; /* Центрирование по вертикали */
+    vertical-align: middle;
     color: rgb(40, 40, 40);
 }
 
-/* Центрирование кнопок по вертикали и горизонтали */
 #usersListTable .buttonContainer,
 #categoriesListTable .buttonContainer,
 #brandsListTable .buttonContainer,
 #productsListTable .buttonContainer {
     display: flex;
-    justify-content: center; /* Центрирование по горизонтали */
-    align-items: center; /* Центрирование по вертикали */
+    justify-content: center;
+    align-items: center;
 }
 
 #usersListTable .button_full_width,
 #categoriesListTable .button_full_width,
 #brandsListTable .button_full_width,
 #productsListTable .button_full_width {
-    width: 100%; /* Кнопка растягивается на всю ширину */
+    width: 100%;
     padding: 10px;
     background-color: #607D8B;
     color: white;
@@ -218,12 +208,95 @@ body {
     border-radius: 8px;
     font-size: 16px;
     margin: 5px 0;
-    text-align: center; /* Центрирование текста кнопки */
+    text-align: center;
 }
 
 #usersListTable .button_full_width:hover,
 #categoriesListTable .button_full_width:hover,
 #brandsListTable .button_full_width:hover,
 #productsListTable .button_full_width:hover {
-    background-color: #455A64; /* Темнее при наведении */
+    background-color: #455A64;
+}
+/*///////////////////////////////////////////////////*/
+/* Стили для сетки продуктов */
+#searchAndSortInMain {
+    margin: 20px 50px 0 30px;
+    display: flex;
+    align-items: center;
+}
+
+#searchInMain {
+    width: 60%;
+}
+#sortSelect {
+    flex: 0 0 30%;
+    margin-left: 10px;
+    align-self: flex-start;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.product-card {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 260px;
+}
+
+.product-image {
+    text-align: center;
+}
+
+.product-img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.product-info {
+    padding-top: 15px;
+}
+
+.product-info h3 {
+    color: #455A64;
+}
+
+#product-price {
+    color: #c88760;
+}
+
+.product-info p {
+    color: #c2d2d8;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.product-detail-images {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    justify-items: center;
+}
+
+.product-detail-img {
+    max-width: 600px;
+    max-height: 600px;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 10px;
 }

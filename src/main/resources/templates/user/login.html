@@ -20,7 +20,7 @@
 
     <form th:action="@{/user/login}" method="POST">
 <!--        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>-->
-        <table id="formTable">
+        <table class="formTable">
             <tr>
                 <td><label for="login">Login:</label></td>
                 <td><input type="text" id="login" name="login" autocomplete="username" required></td>

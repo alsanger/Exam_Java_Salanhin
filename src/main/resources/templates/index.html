@@ -1,19 +1,66 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
-    <title>Sportswear Store</title>
+    <title>Product List</title>
     <link rel="stylesheet" href="/css/reset.css">
     <link rel="stylesheet" href="/css/styles.css">
+
+    <script>
+        // JavaScript для обработки изменения в select и отправки запроса
+        function handleSortChange() {
+            const sortSelect = document.getElementById('sortSelect');
+            const sort = sortSelect.value;
+            const url = `/?sort=${encodeURIComponent(sort)}`;
+            window.location.href = url;
+        }
+    </script>
+
 </head>
 <body>
 
 <header th:insert="sections/header :: header"></header>
 
+<div id="searchAndSortInMain">
+    <form id="searchInMain" action="/" method="GET" style="flex: 1;">
+        <input type="text" name="search" placeholder="Search products..." th:value="${search}">
+        <button type="submit">Search</button>
+    </form>
+
+    <select id="sortSelect" onchange="handleSortChange()" name="sort">
+        <option value="Sort by Default" th:selected="${sort == 'Sort by Default'}">Sort By Default</option>
+        <option value="Price: $-$$$" th:selected="${sort == 'Price: $-$$$'}">Price: $-$$$</option>
+        <option value="Price: $$$-$" th:selected="${sort == 'Price: $$$-$'}">Price: $$$-$</option>
+    </select>
+</div>
+
+
 <div class="container">
-    <h1>Magazine</h1>
-    <p>This is the best online store!</p>
+
+
+    <h2>Product List</h2>
+
+    <div class="products-grid">
+        <div class="product-card" th:each="product, iterStat : ${products}">
+            <div class="product-image">
+                <img th:src="@{'/' + ${product.productImages[0].imagePath}}" alt="Product Image" class="product-img">
+            </div>
+            <div class="product-info">
+                <h3 th:text="${product.name}">Product Name</h3>
+                <p><strong>Price:</strong> $<span th:text="${product.price}">0.00</span></p>
+                <div class="buttonContainer">
+                    <form action="/product/addToBasket" method="POST" th:if="${userId != null}">
+                        <input type="hidden" name="userId" th:value="${userId}"/>
+                        <input type="hidden" name="productId" th:value="${product.id}"/>
+                        <button type="submit" class="button_full_width">Add to Basket</button>
+                    </form>
+                    <form th:action="@{/product/details/{id}(id=${product.id})}" method="get">
+                        <button type="submit" class="button_full_width">More Details</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <footer th:replace="sections/footer :: footer"></footer>

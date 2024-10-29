@@ -43,10 +43,10 @@ public class UserController {
         return (user != null) ? user.getRole().getName() : null;
     }
 
-    @GetMapping("/")
-    public String home(Model model, HttpServletRequest request) {
-        return "index";
-    }
+//    @GetMapping("/")
+//    public String home(Model model, HttpServletRequest request) {
+//        return "index";
+//    }
 
     @GetMapping("/user/login")
     public String loginForm() {

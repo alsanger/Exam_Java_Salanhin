@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Product</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<header th:insert="sections/header :: header"></header>
+
+<div class="container">
+
+    <form action="/admin/manageProducts" method="GET">
+        <button type="submit">Return to Product Management</button>
+    </form>
+    <br/>
+    <h2>Edit Product</h2>
+
+    <form action="/admin/updateProduct" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="id" th:value="${product.id}"/>
+
+        <table class="formTable">
+            <tr>
+                <td><label for="productName">Product Name:</label></td>
+                <td><input type="text" id="productName" name="name" th:value="${product.name}" required></td>
+            </tr>
+            <tr>
+                <td><label for="productPrice">Price:</label></td>
+                <td><input type="number" id="productPrice" step="0.01" name="price" th:value="${product.price}"
+                           required></td>
+            </tr>
+            <tr>
+                <td><label for="categorySelect">Category:</label></td>
+                <td>
+                    <select id="categorySelect" name="categoryId" required>
+                        <option value="" disabled th:if="${product.category == null}">Select a category</option>
+                        <option th:each="category : ${categories}" th:value="${category.id}"
+                                th:text="${category.name}"
+                                th:selected="${product.category != null && category.id == product.category.id}"></option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="brandSelect">Brand:</label></td>
+                <td>
+                    <select id="brandSelect" name="brandId">
+                        <option value="" disabled th:if="${product.brand == null}">Select a brand (optional)</option>
+                        <option th:each="brand : ${brands}" th:value="${brand.id}"
+                                th:text="${brand.name}"
+                                th:selected="${product.brand != null && brand.id == product.brand.id}"></option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="productSize">Size:</label></td>
+                <td><input type="text" id="productSize" name="size" th:value="${product.size}"></td>
+            </tr>
+            <tr>
+                <td><label for="productColor">Color:</label></td>
+                <td><input type="text" id="productColor" name="color" th:value="${product.color}"></td>
+            </tr>
+            <tr>
+                <td><label for="productDescription">Description:</label></td>
+                <td><textarea id="productDescription" name="description" th:text="${product.description}"
+                              rows="10"></textarea></td>
+            </tr>
+            <tr>
+                <td><label for="productStockQuantity">Stock Quantity:</label></td>
+                <td><input type="number" id="productStockQuantity" step="1" name="stockQuantity"
+                           th:value="${product.stockQuantity}" required></td>
+            </tr>
+            <tr>
+                <td><label for="productImage">Add Images:</label></td>
+                <td><input type="file" id="productImage" name="images" accept="image/*" multiple></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <button type="submit" class="button_right">Save New Data</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    <table style="width: 100%; margin-top: 20px;">
+        <tbody>
+        <tr th:each="image : ${product.productImages}">
+            <td style="text-align: center;">
+                <img th:src="@{'/' + ${image.imagePath}}" alt="Product Image"
+                     style="max-width: 300px; max-height: 300px;">
+            </td>
+            <td style="text-align: right; vertical-align: middle;">
+                <form action="/admin/deleteProductImage" method="POST" style="display: inline;">
+                    <input type="hidden" name="imageId" th:value="${image.id}"/>
+                    <input type="hidden" name="productId" th:value="${product.id}"/>
+                    <button type="submit" class="button_right">Delete Image</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<footer th:replace="sections/footer :: footer"></footer>
+
+</body>
+</html>

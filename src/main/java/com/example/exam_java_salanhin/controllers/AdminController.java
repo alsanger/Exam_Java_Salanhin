@@ -6,21 +6,26 @@ import com.example.exam_java_salanhin.models.Product;
 import com.example.exam_java_salanhin.models.User;
 import com.example.exam_java_salanhin.services.admin.AdminService;
 import com.example.exam_java_salanhin.services.user.UserService;
+import org.springframework.core.io.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class AdminController {
@@ -49,6 +54,27 @@ public class AdminController {
             response.sendRedirect("/user/login");
             return null;
         }
+    }
+
+    @GetMapping("/images/{productId}/{imageName:.+}")
+    public ResponseEntity<Resource> serveFile(@PathVariable Long productId, @PathVariable String imageName) {
+        try {
+            Path filePath = Paths.get("src/main/resources/static/images/" + productId + "/" + imageName);
+
+            if (Files.exists(filePath) && Files.isReadable(filePath)) {
+                Resource file = new UrlResource(filePath.toUri());
+
+                String contentType = Files.probeContentType(filePath);
+                if (contentType == null) {
+                    contentType = "application/octet-stream";
+                }
+
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_TYPE, contentType)
+                        .body(file);
+            }
+        } catch (Exception ignored) {}
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/admin/workAreaAdmin")
@@ -212,16 +238,67 @@ public class AdminController {
                                 @RequestParam(value = "brandId", required = false) Long brandId,
                                 @RequestParam(value = "images", required = false) MultipartFile[] images) {
 
-        Category category = adminService.getCategoryById(categoryId);
-        adminService.assignCategoryToProduct(product, category);
+        adminService.setProductCategoryAndBrand(product, categoryId, brandId);
+        adminService.createProduct(product, images);
 
-        if (brandId != null) {
-            Brand brand = adminService.getBrandById(brandId);
-            adminService.assignBrandToProduct(product, brand);
+        return "redirect:/admin/manageProducts";
+    }
+
+    @PostMapping("/admin/updateProduct")
+    public String updateProduct(@ModelAttribute Product product,
+                                @RequestParam("categoryId") Long categoryId,
+                                @RequestParam(value = "brandId", required = false) Long brandId,
+                                @RequestParam(value = "images", required = false) MultipartFile[] images) {
+
+        adminService.setProductCategoryAndBrand(product, categoryId, brandId);
+        adminService.updateProduct(product, images);
+
+        return "redirect:/admin/manageProducts";
+    }
+
+    @GetMapping("/admin/editProduct")
+    public ModelAndView editProduct(@RequestParam("productId") Long productId) {
+        ModelAndView modelAndView = new ModelAndView();
+
+        Optional<Product> optionalProduct = adminService.getProductById(productId);
+        if (optionalProduct.isEmpty()) {
+            modelAndView.setViewName("redirect:/admin/manageProducts");
+            return modelAndView;
         }
 
-        adminService.saveProductWithImages(product, images);
+        Product product = optionalProduct.get();
 
+        List<Category> categories = adminService.getAllCategories();
+        List<Brand> brands = adminService.getAllBrands();
+
+        modelAndView.addObject("product", product);
+        modelAndView.addObject("categories", categories);
+        modelAndView.addObject("brands", brands);
+        modelAndView.setViewName("admin/product/editProduct");
+
+        return modelAndView;
+    }
+
+//    @PostMapping("/admin/addProductImage")
+//    public String addProductImage(@RequestParam("productId") Long productId,
+//                                  @RequestParam("images") MultipartFile[] images) {
+//        adminService.addNewImagesToProduct(productId, images);
+//
+//        return "redirect:/admin/editProduct?productId=" + productId;
+//    }
+
+
+    @PostMapping("/admin/deleteProductImage")
+    public String deleteProductImage(@RequestParam("imageId") Long imageId,
+                                     @RequestParam("productId") Long productId) {
+        adminService.deleteProductImage(imageId);
+
+        return "redirect:/admin/editProduct?productId=" + productId;
+    }
+
+    @PostMapping("/admin/deleteProduct")
+    public String deleteProduct(@RequestParam("productId") Long productId) {
+        adminService.deleteProductById(productId);
         return "redirect:/admin/manageProducts";
     }
 }
