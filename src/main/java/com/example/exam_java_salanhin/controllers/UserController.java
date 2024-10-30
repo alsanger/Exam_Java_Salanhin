@@ -1,8 +1,10 @@
 package com.example.exam_java_salanhin.controllers;
 
 import com.example.exam_java_salanhin.models.BlockedUser;
+import com.example.exam_java_salanhin.models.Product;
 import com.example.exam_java_salanhin.models.Role;
 import com.example.exam_java_salanhin.models.User;
+import com.example.exam_java_salanhin.services.product.ProductService;
 import com.example.exam_java_salanhin.services.user.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -23,6 +25,9 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    ProductService productService;
+
     @ModelAttribute("username")
     public String getUsername(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
@@ -42,11 +47,6 @@ public class UserController {
         }
         return (user != null) ? user.getRole().getName() : null;
     }
-
-//    @GetMapping("/")
-//    public String home(Model model, HttpServletRequest request) {
-//        return "index";
-//    }
 
     @GetMapping("/user/login")
     public String loginForm() {

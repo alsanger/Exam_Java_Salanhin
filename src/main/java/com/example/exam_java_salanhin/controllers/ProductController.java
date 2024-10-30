@@ -36,6 +36,16 @@ public class ProductController {
         return (user != null) ? user.getFirstName() : null;
     }
 
+    @ModelAttribute("role")
+    public String getRole(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        User user = null;
+        if (session != null) {
+            user = (User) session.getAttribute("user");
+        }
+        return (user != null) ? user.getRole().getName() : null;
+    }
+
     @ModelAttribute("userId")
     public Long getUserId(HttpServletRequest request) {
         HttpSession session = request.getSession(false);

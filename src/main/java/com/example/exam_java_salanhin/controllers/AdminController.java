@@ -56,6 +56,16 @@ public class AdminController {
         }
     }
 
+    @ModelAttribute("role")
+    public String getRole(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        User user = null;
+        if (session != null) {
+            user = (User) session.getAttribute("user");
+        }
+        return (user != null) ? user.getRole().getName() : null;
+    }
+
     @GetMapping("/images/{productId}/{imageName:.+}")
     public ResponseEntity<Resource> serveFile(@PathVariable Long productId, @PathVariable String imageName) {
         try {
