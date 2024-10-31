@@ -1,18 +1,16 @@
 package com.example.exam_java_salanhin.services.order;
 
-import com.example.exam_java_salanhin.models.Basket;
-import com.example.exam_java_salanhin.models.BasketItem;
-import com.example.exam_java_salanhin.models.Product;
-import com.example.exam_java_salanhin.models.User;
-import com.example.exam_java_salanhin.repositories.BasketItemRepository;
-import com.example.exam_java_salanhin.repositories.BasketRepository;
-import com.example.exam_java_salanhin.repositories.UserRepository;
+import com.example.exam_java_salanhin.enums.OrderStatus;
+import com.example.exam_java_salanhin.models.*;
+import com.example.exam_java_salanhin.repositories.*;
 import com.example.exam_java_salanhin.services.admin.AdminService;
 import com.example.exam_java_salanhin.services.product.ProductService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +31,14 @@ public class OrderService {
     private ProductService productService;
 
     @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderDetailsRepository orderDetailsRepository;
+
+    @Autowired
     private HttpSession httpSession;
+
 
     public List<BasketItem> getUserBasket(Long userId) {
         User user = userRepository.findById(userId).orElse(null);
@@ -49,7 +54,6 @@ public class OrderService {
         BasketItem basketItem = basketItemRepository.findById(basketItemId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid basket item ID"));
 
-        // Обновляем количество
         basketItem.setQuantity(quantity);
         basketItemRepository.save(basketItem);
     }
@@ -64,15 +68,48 @@ public class OrderService {
         return basketRepository.findByUser(user).orElse(null);
     }
 
-    public void removeItem(Long basketItemId) {
+    public void removeItemFromBasket(Long basketItemId) {
+        BasketItem basketItem = basketItemRepository.findById(basketItemId).orElse(null);
+        if (basketItem == null) {
+            return;
+        }
+
+        Basket basket = basketItem.getBasket();
         basketItemRepository.deleteById(basketItemId);
+        List<BasketItem> remainingItems = basketItemRepository.findByBasket(basket);
+
+        if (remainingItems.isEmpty()) {
+            basketRepository.delete(basket);
+        }
     }
 
-    public void checkout(Long userId) {
-        User user = userRepository.findById(userId).orElse(null);
+    public void checkout() {
+        User user = (User) httpSession.getAttribute("user");
+        if (user == null) return;
+
         Basket basket = basketRepository.findByUser(user).orElse(null);
-        List<BasketItem> basketItems = basketItemRepository.findByBasket(basket);
-        basketItemRepository.deleteAll(basketItems);
+        if (basket == null || basket.getItems().isEmpty()) return;
+
+        Order order = new Order();
+        order.setUser(user);
+        order.setTotalAmount(basket.getTotalPrice());
+        order.setOrderStatus(OrderStatus.PENDING);
+        order.setCreatedAt(LocalDateTime.now());
+        orderRepository.save(order);
+
+        for (BasketItem basketItem : basket.getItems()) {
+            OrderDetail orderDetail = new OrderDetail();
+            orderDetail.setOrder(order);
+            orderDetail.setProduct(basketItem.getProduct());
+            orderDetail.setQuantity(basketItem.getQuantity());
+            orderDetail.setPrice(basketItem.getProduct().getPrice());
+            BigDecimal total = basketItem.getProduct().getPrice().multiply(BigDecimal.valueOf(basketItem.getQuantity()));
+            orderDetail.setTotal(total);
+            orderDetailsRepository.save(orderDetail);
+        }
+
+        basketItemRepository.deleteAll(basket.getItems());
+        basketRepository.delete(basket);
     }
 
     public void addToBasket(Long userId, Long productId) {

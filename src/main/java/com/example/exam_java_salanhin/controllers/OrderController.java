@@ -71,16 +71,20 @@ public class OrderController {
         return "redirect:/basket";
     }
 
-    @PostMapping("/removeItem")
-    public String removeItem(@RequestParam Long basketItemId) {
-        orderService.removeItem(basketItemId);
+    @PostMapping("/removeItemFromBasket")
+    public String removeItemFromBasket(@RequestParam Long basketItemId) {
+        orderService.removeItemFromBasket(basketItemId);
         return "redirect:/basket";
     }
 
     @PostMapping("/checkout")
-    public String checkout(HttpSession session) {
-        User user = (User) session.getAttribute("user");
-        orderService.checkout(user.getId());
-        return "redirect:/confirmation";
+    public String checkout() {
+        orderService.checkout();
+        return "redirect:/orderPlaced";
+    }
+
+    @GetMapping("/orderPlaced")
+    public String orderPlaced() {
+        return "order/orderPlaced";
     }
 }

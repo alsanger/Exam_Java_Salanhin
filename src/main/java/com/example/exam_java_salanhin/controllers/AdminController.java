@@ -38,23 +38,32 @@ public class AdminController {
     @Autowired
     private UserController userController;
 
-
     @ModelAttribute("username")
-    public String getUsername(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public String getUsername(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         User user = null;
-
         if (session != null) {
             user = (User) session.getAttribute("user");
         }
-
-        if (user != null && "ROLE_ADMIN".equals(user.getRole().getName())) {
-            return user.getFirstName();
-        } else {
-            response.sendRedirect("/user/login");
-            return null;
-        }
+        return (user != null) ? user.getFirstName() : null;
     }
+
+//    @ModelAttribute("username")
+//    public String getUsername(HttpServletRequest request, HttpServletResponse response) throws IOException {
+//        HttpSession session = request.getSession(false);
+//        User user = null;
+//
+//        if (session != null) {
+//            user = (User) session.getAttribute("user");
+//        }
+//
+//        if (user != null && "ROLE_ADMIN".equals(user.getRole().getName())) {
+//            return user.getFirstName();
+//        } else {
+//            response.sendRedirect("/user/login");
+//            return null;
+//        }
+//    }
 
     @ModelAttribute("role")
     public String getRole(HttpServletRequest request) {

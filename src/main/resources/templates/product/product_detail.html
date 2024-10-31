@@ -17,7 +17,7 @@
             <h3 id="product-price"><strong>Price:</strong> $<span th:text="${product.price}">0.00</span></h3>
             <p><strong>Description:</strong> <span th:text="${product.description}">Product description goes here.</span></p>
             <div class="buttonContainer">
-                <form action="/product/addToBasket" method="POST" th:if="${userId != null}">
+                <form action="/addToBasket" method="POST" th:if="${userId != null}">
                     <input type="hidden" name="userId" th:value="${userId}"/>
                     <input type="hidden" name="productId" th:value="${product.id}"/>
                     <button type="submit" class="button_full_width">Add to Basket</button>
