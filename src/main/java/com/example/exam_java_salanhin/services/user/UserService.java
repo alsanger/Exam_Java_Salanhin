@@ -1,11 +1,7 @@
 package com.example.exam_java_salanhin.services.user;
 
-import com.example.exam_java_salanhin.models.BlockedUser;
-import com.example.exam_java_salanhin.models.Role;
-import com.example.exam_java_salanhin.models.User;
-import com.example.exam_java_salanhin.repositories.BlockedUserRepository;
-import com.example.exam_java_salanhin.repositories.RoleRepository;
-import com.example.exam_java_salanhin.repositories.UserRepository;
+import com.example.exam_java_salanhin.models.*;
+import com.example.exam_java_salanhin.repositories.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +17,7 @@ import javax.swing.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +33,16 @@ public class UserService {
     BlockedUserRepository blockedUserRepository;
 
     @Autowired
+    OrderRepository orderRepository;
+
+    @Autowired
+    OrderDetailsRepository orderDetailsRepository;
+
+    @Autowired
     private UserValidationService userValidationService;
+
+    @Autowired
+    private HttpSession httpSession;
 
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -194,5 +200,34 @@ public class UserService {
             return true;
         }
         return false;
+    }
+
+    public List<Order> findOrders() {
+        User user = (User) httpSession.getAttribute("user");
+        if (user == null) {
+            return new ArrayList<>();
+        }
+
+        List<Order> orders = orderRepository.findByUser(user).orElse(null);
+        if (orders == null) {
+            return new ArrayList<>();
+        }
+
+        return orders;
+    }
+
+    public List<OrderDetail> findOrderDetails() {
+        List<Order> orders = findOrders();
+        if (orders == null || orders.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<OrderDetail> orderDetails = new ArrayList<>();
+        for (Order order : orders) {
+            List<OrderDetail> details = orderDetailsRepository.findByOrder(order);
+            orderDetails.addAll(details);
+        }
+
+        return orderDetails;
     }
 }

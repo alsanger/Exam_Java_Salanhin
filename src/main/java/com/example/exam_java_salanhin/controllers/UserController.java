@@ -1,9 +1,6 @@
 package com.example.exam_java_salanhin.controllers;
 
-import com.example.exam_java_salanhin.models.BlockedUser;
-import com.example.exam_java_salanhin.models.Product;
-import com.example.exam_java_salanhin.models.Role;
-import com.example.exam_java_salanhin.models.User;
+import com.example.exam_java_salanhin.models.*;
 import com.example.exam_java_salanhin.services.product.ProductService;
 import com.example.exam_java_salanhin.services.user.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -223,6 +220,19 @@ public class UserController {
             modelAndView.setViewName("redirect:/");
             session.invalidate();
         }
+        return modelAndView;
+    }
+
+    @GetMapping("/user/profileUser")
+    public ModelAndView profileUser() {
+        ModelAndView modelAndView = new ModelAndView();
+
+        List<Order> orders = userService.findOrders();
+        List<OrderDetail> orderDetails = userService.findOrderDetails();
+        modelAndView.addObject("orders", orders);
+        modelAndView.addObject("orderDetails", orderDetails);
+        modelAndView.setViewName("user/profileUser");
+
         return modelAndView;
     }
 }

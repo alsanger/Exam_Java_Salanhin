@@ -158,7 +158,8 @@ body {
 #usersListTable,
 #categoriesListTable,
 #brandsListTable,
-#productsListTable {
+#productsListTable,
+#ordersListTable {
     width: 100%;
     border-collapse: collapse;
     margin: 20px 0;
@@ -169,7 +170,8 @@ body {
 #usersListTable th,
 #categoriesListTable th,
 #brandsListTable th,
-#productsListTable th {
+#productsListTable th,
+#ordersListTable th {
     text-align: center;
     padding: 10px;
     background-color: #607D8B;
@@ -179,7 +181,8 @@ body {
 #usersListTable td,
 #categoriesListTable td,
 #brandsListTable td,
-#productsListTable td {
+#productsListTable td,
+#ordersListTable td {
     text-align: left;
     padding: 10px;
     vertical-align: middle;
@@ -189,7 +192,8 @@ body {
 #usersListTable .buttonContainer,
 #categoriesListTable .buttonContainer,
 #brandsListTable .buttonContainer,
-#productsListTable .buttonContainer {
+#productsListTable .buttonContainer,
+#ordersListTable .buttonContainer {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -198,7 +202,8 @@ body {
 #usersListTable .button_full_width,
 #categoriesListTable .button_full_width,
 #brandsListTable .button_full_width,
-#productsListTable .button_full_width {
+#productsListTable .button_full_width,
+#ordersListTable .button_full_width {
     width: 100%;
     padding: 10px;
     background-color: #607D8B;
@@ -214,7 +219,8 @@ body {
 #usersListTable .button_full_width:hover,
 #categoriesListTable .button_full_width:hover,
 #brandsListTable .button_full_width:hover,
-#productsListTable .button_full_width:hover {
+#productsListTable .button_full_width:hover,
+#ordersListTable .button_full_width:hover {
     background-color: #455A64;
 }
 /*///////////////////////////////////////////////////*/
@@ -299,4 +305,22 @@ body {
     height: auto;
     object-fit: cover;
     border-radius: 10px;
+}
+
+.product-name-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* Расстояние между наименованиями */
+    align-items: flex-start;
+    padding: 10px 0;
+}
+
+.product-name-vertical-item {
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(150, 140, 150, 0.5); /* Разделительная линия между товарами */
+    color: #455A64; /* Цвет текста для наименований */
+}
+
+.product-name-vertical-item:last-child {
+    border-bottom: none; /* Убираем линию у последнего элемента */
 }
