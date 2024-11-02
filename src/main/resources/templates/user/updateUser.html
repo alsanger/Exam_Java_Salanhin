@@ -21,6 +21,8 @@
     <form action="/user/updateUser" method="POST">
         <input type="hidden" th:name="fromAdmin" th:value="${fromAdmin}"/>
         <input type="hidden" th:name="id" th:value="${user.id}"/>
+        <input type="hidden" th:if="${fromAdmin == false}" name="newUserRoleString" th:value="${user.role.name}" />
+        <input type="hidden" th:if="${fromAdmin == false}" name="blockStatus" th:value="${isBlocked}" />
         <table class="formTable">
             <tr>
                 <td><label for="login">Login:</label></td>

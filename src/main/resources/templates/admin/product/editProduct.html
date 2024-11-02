@@ -88,7 +88,7 @@
         <tbody>
         <tr th:each="image : ${product.productImages}">
             <td style="text-align: center;">
-                <img th:src="@{'/' + ${image.imagePath}}" alt="Product Image"
+                <img th:src="@{${'/' + image.imagePath}}" alt="Product Image"
                      style="max-width: 300px; max-height: 300px;">
             </td>
             <td style="text-align: right; vertical-align: middle;">

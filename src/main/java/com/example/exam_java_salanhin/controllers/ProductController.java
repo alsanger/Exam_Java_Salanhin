@@ -13,8 +13,16 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
 import java.util.List;
+
+import org.springframework.core.io.UrlResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Controller
 public class ProductController {
@@ -85,4 +93,26 @@ public class ProductController {
         return modelAndView;
     }
 
+    @GetMapping("/images/{productId}/{imageName:.+}")
+    public ResponseEntity<Resource> serveFile(@PathVariable Long productId,
+                                              @PathVariable String imageName) throws IOException {
+        try {
+            Path filePath = Paths.get("src/main/resources/static/images/" + productId + "/" + imageName);
+
+            if (Files.exists(filePath) && Files.isReadable(filePath)) {
+                Resource file = new UrlResource(filePath.toUri());
+
+                String contentType = Files.probeContentType(filePath);
+                if (contentType == null) {
+                    contentType = "application/octet-stream";
+                }
+
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_TYPE, contentType)
+                        .body(file);
+            }
+        } catch (Exception ignored) {
+        }
+        return ResponseEntity.notFound().build();
+    }
 }

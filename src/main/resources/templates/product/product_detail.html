@@ -28,7 +28,7 @@
     <br/>
     <div class="product-detail-images">
         <div th:each="image : ${product.productImages}">
-            <img th:src="@{'/' + ${image.imagePath}}" alt="Product Image" class="product-detail-img">
+            <img th:src="@{${'/' + image.imagePath}}" alt="Product Image" class="product-detail-img">
         </div>
     </div>
 </div>

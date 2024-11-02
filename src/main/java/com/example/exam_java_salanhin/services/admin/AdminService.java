@@ -123,8 +123,6 @@ public class AdminService {
         }
     }
 
-
-    /////////////////////////////////////////////////////////////////////
     public void createProduct(Product product, MultipartFile[] images) {
         product.setCreatedAt(LocalDateTime.now());
         productRepository.save(product);
@@ -159,30 +157,23 @@ public class AdminService {
     }
 
     public void saveImages(Product product, MultipartFile[] images) {
-        // Путь к директории для изображений продукта
         String folderPath = "src/main/resources/static/images/" + product.getId();
         File directory = new File(folderPath);
 
-        // Создаём директорию, если она не существует
         if (!directory.exists()) {
             directory.mkdirs();
         }
 
-        // Определяем следующий доступный индекс
         int index = getNextAvailableIndex(product.getId());
 
-        // Проходим по каждому изображению и сохраняем его
         for (MultipartFile image : images) {
             if (!image.isEmpty()) {
-                // Определяем расширение файла
                 String extension = getFileExtension(image.getOriginalFilename());
 
-                // Формируем новое имя файла
                 String newFileName = product.getId() + "_" + index + extension;
                 String newFilePath = folderPath + "/" + newFileName;
-                String dbPath = "images/" + product.getId() + "/" + newFileName; // Путь для БД
+                String dbPath = "images/" + product.getId() + "/" + newFileName;
 
-                // Сохраняем файл на диск
                 try {
                     Files.write(Paths.get(newFilePath), image.getBytes());
 
@@ -199,10 +190,8 @@ public class AdminService {
     }
 
     private int getNextAvailableIndex(Long productId) {
-        // Получаем все изображения для данного продукта из БД
         List<ProductImage> productImages = productImageRepository.findByProductId(productId);
 
-        // Определяем максимальный индекс на основе текущих имен файлов
         int maxIndex = 0;
         for (ProductImage image : productImages) {
             String fileName = image.getImagePath();
@@ -226,134 +215,6 @@ public class AdminService {
         return (dotIndex == -1) ? "" : fileName.substring(dotIndex);
     }
 
-//    public void addNewImagesToProduct(Long productId, MultipartFile[] newImages) {
-//        Optional<Product> optionalProduct = this.getProductById(productId);
-//        if (optionalProduct.isEmpty()) {
-//            return;
-//        }
-//        Product product = optionalProduct.get();
-//
-//        List<ProductImage> existingImages = product.getProductImages();
-//        List<String> existingImagePaths = existingImages.stream()
-//                .map(ProductImage::getImagePath)
-//                .collect(Collectors.toList());
-//
-//        String folderPath = "src/main/resources/static/images/" + product.getId();
-//        File directory = new File(folderPath);
-//
-//        if (!directory.exists() && !directory.mkdirs()) {
-//            return;
-//        }
-//
-//        for (MultipartFile image : newImages) {
-//            if (!image.isEmpty() && isImageFile(image)) {
-//                String extension = getFileExtension(image.getOriginalFilename());
-//                int index = getNextAvailableIndex(existingImages);
-//                String newFileName = product.getId() + "_" + index + extension;
-//                String newFilePath = folderPath + "/" + newFileName;
-//                String dbPath = "images/" + product.getId() + "/" + newFileName;
-//
-//                if (!existingImagePaths.contains(dbPath) && saveImageFile(image, newFilePath)) {
-//                    ProductImage productImage = new ProductImage();
-//                    productImage.setImagePath(dbPath);
-//                    productImage.setProduct(product);
-//                    existingImages.add(productImage);
-//                }
-//            }
-//        }
-//        productRepository.save(product);
-//    }
-
-
-//    public void saveProductWithImages(Product product, MultipartFile[] images) {
-//        productRepository.save(product);
-//
-//        if (images != null && images.length > 0) {
-//            List<ProductImage> productImages = processAndSaveImages(product, images);
-//            product.setProductImages(productImages);
-//            productRepository.save(product);
-//        }
-//    }
-//
-//    public void updateProductWithNewImages(Product product, MultipartFile[] newImages) {
-//
-//        if (newImages != null && newImages.length > 0) {
-//            List<ProductImage> productImages = processAndSaveImages(product, newImages);
-//            product.getProductImages().addAll(productImages);
-//            productRepository.save(product);
-//        }
-//    }
-
-//    private List<ProductImage> processAndSaveImages(Product product, MultipartFile[] images) {
-//        List<ProductImage> productImages = product.getProductImages();
-//        String folderPath = "src/main/resources/static/images/" + product.getId();
-//        File directory = new File(folderPath);
-//
-//        if (!directory.exists() && !directory.mkdirs()) {
-//            return productImages;
-//        }
-//
-//        int index = getNextAvailableIndex(productImages);
-//
-//        for (MultipartFile image : images) {
-//            if (!image.isEmpty() && isImageFile(image)) {
-//                String extension = getFileExtension(image.getOriginalFilename());
-//                String newFileName = product.getId() + "_" + index + extension;
-//                String newFilePath = folderPath + "/" + newFileName;
-//                String dbPath = "images/" + product.getId() + "/" + newFileName; // Путь для сохранения в БД
-//
-//                if (saveImageFile(image, newFilePath)) {
-//                    ProductImage productImage = new ProductImage();
-//                    productImage.setImagePath(dbPath);
-//                    productImage.setProduct(product);
-//                    productImages.add(productImage);
-//                    index++;
-//                }
-//            }
-//        }
-//        return productImages;
-//    }
-//
-//    private int getNextAvailableIndex(List<ProductImage> productImages) {
-//        int maxIndex = 0;
-//        for (ProductImage image : productImages) {
-//            String fileName = image.getImagePath();
-//            String[] parts = fileName.split("_");
-//            if (parts.length > 1) {
-//                try {
-//                    int index = Integer.parseInt(parts[1].split("\\.")[0]);
-//                    if (index > maxIndex) {
-//                        maxIndex = index;
-//                    }
-//                } catch (NumberFormatException ignored) {}
-//            }
-//
-//        }
-//        return maxIndex + 1;
-//    }
-//
-//    private boolean saveImageFile(MultipartFile image, String filePath) {
-//        try {
-//            Path path = Paths.get(filePath);
-//
-//            if (!Files.exists(path)) {
-//                Files.write(path, image.getBytes());
-//                return true;
-//            }
-//        } catch (Exception e) {}
-//        return false;
-//    }
-//
-//    private boolean isImageFile(MultipartFile file) {
-//        String contentType = file.getContentType();
-//        return contentType != null && contentType.startsWith("image/");
-//    }
-//
-//    private String getFileExtension(String fileName) {
-//        int dotIndex = fileName.lastIndexOf('.');
-//        return (dotIndex == -1) ? "" : fileName.substring(dotIndex);
-//    }
-
     public void deleteProductById(Long productId) {
         Optional<Product> productOptional = productRepository.findById(productId);
 
@@ -363,7 +224,6 @@ public class AdminService {
             String productImagesFolderPath = "src/main/resources/static/images/" + product.getId();
             deleteFolder(new File(productImagesFolderPath));
 
-            // Удаляем продукт и связанные с ним записи из базы данных
             productRepository.delete(product);
         }
     }

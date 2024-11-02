@@ -28,7 +28,7 @@
             <tbody>
             <tr th:each="item : ${basketItems}">
                 <td>
-                    <img th:src="@{${item.product.productImages[0].imagePath}}" alt="Product Image" class="product-img" width="250" height="250" th:if="${item.product.productImages.size() > 0}"/>
+                    <img th:src="@{${'/' + item.product.productImages[0].imagePath}}" alt="Product Image" class="product-img" width="250" height="250" th:if="${item.product.productImages.size() > 0}"/>
                 </td>
                 <td th:text="${item.product.name}">Product Name</td>
                 <td th:text="${item.product.price}">0.00</td>

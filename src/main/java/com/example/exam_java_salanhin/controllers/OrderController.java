@@ -47,13 +47,12 @@ public class OrderController {
         ModelAndView modelAndView = new ModelAndView("order/basket");
         Basket basket = orderService.getCurrentUserBasket();
 
-        // Добавляем проверку на null
         if (basket == null) {
-            modelAndView.addObject("basketTotal", BigDecimal.ZERO); // Устанавливаем 0 для общей суммы
-            modelAndView.addObject("basketItems", List.of()); // Устанавливаем пустой список для элементов
+            modelAndView.addObject("basketTotal", BigDecimal.ZERO);
+            modelAndView.addObject("basketItems", List.of());
         } else {
             modelAndView.addObject("basketTotal", basket.getTotalPrice() != null ? basket.getTotalPrice() : BigDecimal.ZERO);
-            modelAndView.addObject("basketItems", basket.getItems()); // Передаем элементы корзины
+            modelAndView.addObject("basketItems", basket.getItems());
         }
 
         return modelAndView;

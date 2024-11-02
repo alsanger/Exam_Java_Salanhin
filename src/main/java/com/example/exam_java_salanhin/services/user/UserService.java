@@ -2,20 +2,12 @@ package com.example.exam_java_salanhin.services.user;
 
 import com.example.exam_java_salanhin.models.*;
 import com.example.exam_java_salanhin.repositories.*;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
-
-import javax.swing.*;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +29,9 @@ public class UserService {
 
     @Autowired
     OrderDetailsRepository orderDetailsRepository;
+
+    @Autowired
+    BasketRepository basketRepository;
 
     @Autowired
     private UserValidationService userValidationService;
@@ -153,8 +148,22 @@ public class UserService {
         return "";
     }
 
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+    @Transactional
+    public void deleteUser(Long userId) {
+        List<Order> orders = orderRepository.findByUserId(userId);
+
+        for (Order order : orders) {
+            orderDetailsRepository.deleteByOrderId(order.getId());
+        }
+
+        orderRepository.deleteAll(orders);
+
+        List<Basket> baskets = basketRepository.findByUserId(userId);
+        for (Basket basket : baskets) {
+            basketRepository.delete(basket);
+        }
+
+        userRepository.deleteById(userId);
     }
 
     public List<Role> getAllRoles() {

@@ -19,7 +19,6 @@
     </div>
 
     <form th:action="@{/user/login}" method="POST">
-<!--        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>-->
         <table class="formTable">
             <tr>
                 <td><label for="login">Login:</label></td>
@@ -40,6 +39,5 @@
 
 <footer th:replace="sections/footer :: footer"></footer>
 
-<!--    <script src="/js/scripts.js"></script>-->
 </body>
 </html>

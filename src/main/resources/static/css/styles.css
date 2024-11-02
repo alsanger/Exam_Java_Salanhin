@@ -223,8 +223,7 @@ body {
 #ordersListTable .button_full_width:hover {
     background-color: #455A64;
 }
-/*///////////////////////////////////////////////////*/
-/* Стили для сетки продуктов */
+
 #searchAndSortInMain {
     margin: 20px 50px 0 30px;
     display: flex;
@@ -310,17 +309,17 @@ body {
 .product-name-vertical {
     display: flex;
     flex-direction: column;
-    gap: 5px; /* Расстояние между наименованиями */
+    gap: 5px;
     align-items: flex-start;
     padding: 10px 0;
 }
 
 .product-name-vertical-item {
     padding: 5px 0;
-    border-bottom: 1px solid rgba(150, 140, 150, 0.5); /* Разделительная линия между товарами */
-    color: #455A64; /* Цвет текста для наименований */
+    border-bottom: 1px solid rgba(150, 140, 150, 0.5);
+    color: #455A64;
 }
 
 .product-name-vertical-item:last-child {
-    border-bottom: none; /* Убираем линию у последнего элемента */
+    border-bottom: none;
 }

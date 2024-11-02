@@ -6,23 +6,16 @@ import com.example.exam_java_salanhin.models.Product;
 import com.example.exam_java_salanhin.models.User;
 import com.example.exam_java_salanhin.services.admin.AdminService;
 import com.example.exam_java_salanhin.services.user.UserService;
-import org.springframework.core.io.Resource;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.UrlResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -38,9 +31,15 @@ public class AdminController {
     @Autowired
     private UserController userController;
 
+    @Autowired
+    HttpSession session;
+
+    @Autowired
+    HttpServletResponse response;
+
     @ModelAttribute("username")
     public String getUsername(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
+        session = request.getSession(false);
         User user = null;
         if (session != null) {
             user = (User) session.getAttribute("user");
@@ -48,26 +47,9 @@ public class AdminController {
         return (user != null) ? user.getFirstName() : null;
     }
 
-//    @ModelAttribute("username")
-//    public String getUsername(HttpServletRequest request, HttpServletResponse response) throws IOException {
-//        HttpSession session = request.getSession(false);
-//        User user = null;
-//
-//        if (session != null) {
-//            user = (User) session.getAttribute("user");
-//        }
-//
-//        if (user != null && "ROLE_ADMIN".equals(user.getRole().getName())) {
-//            return user.getFirstName();
-//        } else {
-//            response.sendRedirect("/user/login");
-//            return null;
-//        }
-//    }
-
     @ModelAttribute("role")
     public String getRole(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
+        session = request.getSession(false);
         User user = null;
         if (session != null) {
             user = (User) session.getAttribute("user");
@@ -75,29 +57,20 @@ public class AdminController {
         return (user != null) ? user.getRole().getName() : null;
     }
 
-    @GetMapping("/images/{productId}/{imageName:.+}")
-    public ResponseEntity<Resource> serveFile(@PathVariable Long productId, @PathVariable String imageName) {
-        try {
-            Path filePath = Paths.get("src/main/resources/static/images/" + productId + "/" + imageName);
+    @ModelAttribute("redirectToLogin")
+    private void redirectToLogin() throws IOException {
+        User user = null;
+        if (session != null) {
+            user = (User) session.getAttribute("user");
+        }
 
-            if (Files.exists(filePath) && Files.isReadable(filePath)) {
-                Resource file = new UrlResource(filePath.toUri());
-
-                String contentType = Files.probeContentType(filePath);
-                if (contentType == null) {
-                    contentType = "application/octet-stream";
-                }
-
-                return ResponseEntity.ok()
-                        .header(HttpHeaders.CONTENT_TYPE, contentType)
-                        .body(file);
-            }
-        } catch (Exception ignored) {}
-        return ResponseEntity.notFound().build();
+        if (user == null || !("ROLE_ADMIN".equals(user.getRole().getName()))) {
+            response.sendRedirect("/user/login");
+        }
     }
 
     @GetMapping("/admin/workAreaAdmin")
-    public String workAreaAdmin() {
+    public String workAreaAdmin() throws IOException {
         return "admin/workAreaAdmin";
     }
 
@@ -162,7 +135,8 @@ public class AdminController {
     }
 
     @PostMapping("/admin/updateCategory")
-    public String updateCategory(@RequestParam("categoryId") Long categoryId, @RequestParam("categoryName") String categoryName) {
+    public String updateCategory(@RequestParam("categoryId") Long categoryId,
+                                 @RequestParam("categoryName") String categoryName) {
         adminService.updateCategory(categoryId, categoryName);
         return "redirect:/admin/manageCategories";
     }
@@ -297,15 +271,6 @@ public class AdminController {
 
         return modelAndView;
     }
-
-//    @PostMapping("/admin/addProductImage")
-//    public String addProductImage(@RequestParam("productId") Long productId,
-//                                  @RequestParam("images") MultipartFile[] images) {
-//        adminService.addNewImagesToProduct(productId, images);
-//
-//        return "redirect:/admin/editProduct?productId=" + productId;
-//    }
-
 
     @PostMapping("/admin/deleteProductImage")
     public String deleteProductImage(@RequestParam("imageId") Long imageId,
